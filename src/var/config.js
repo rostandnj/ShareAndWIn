@@ -11,12 +11,15 @@ export const API_REGISTER = 'account/register';
 export const API_RESET_PASSWORD = 'account/newPasswdMail';
 export const API_USER_PROFILE = 'auth/me';
 export const API_FILE = 'account/read/';
+export const API_FILE_MINI = 'account/readMiniature/';
+export const API_FILE_MEDIUM = 'account/readMedium/';
 export const API_Loyality = 'company/offer/loyaltypoint/';
 export const API_UPDATE_PROFILE = 'account/update/';
 export const API_UPDATE_PROFILE_PICTURE = 'account/updateProfilPic';
 export const API_COMPANY_OFFERS = 'company/offer/page';
 export const API_COMPANY_MAKE_REACTION = 'company/view/create';
-export const API_COMPANY_GET_COMMENT = 'company/comments';
+export const API_COMPANY_GET_COMMENT_OLD = 'company/comments';
+export const API_COMPANY_GET_COMMENT = 'company/offerCommentInOfferPage';
 export const API_COMPANY_MAKE_COMMENT = 'company/offer/comment';
 export const API_USER_GROUPS = 'group/usersGroup/';
 
@@ -31,6 +34,8 @@ const Config = {
   API_RESET_PASSWORD,
   API_USER_PROFILE,
   API_FILE,
+  API_FILE_MINI,
+  API_FILE_MEDIUM,
   API_Loyality,
   API_UPDATE_PROFILE,
   API_UPDATE_PROFILE_PICTURE,

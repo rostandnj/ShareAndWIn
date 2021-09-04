@@ -60,4 +60,6 @@ export default {
   respond_to_comment: 'Reply to this comment ...',
   groups: 'Groups',
   password_link_sent: 'Reset password link sent successfully',
+  login_screen: 'Login',
+  loading_more: 'loading more',
 };

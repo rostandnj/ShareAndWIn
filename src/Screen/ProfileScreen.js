@@ -111,7 +111,6 @@ const ProfileScreen = (props) => {
           u.photo = res.data.data;
           setUser(u);
           props.isUpdate(u);
-          console.log(res.data.data);
           setErrorPic(I18n.t('profile_updated'));
           setTimeout(() => {
             setIsPictureModalVisible(false);
@@ -155,7 +154,6 @@ const ProfileScreen = (props) => {
       lastName: props.user.lastName,
       email: props.user.email,
     };
-    console.log(data);
     setUpdatingProfile(true);
     setError('');
     API.put(
@@ -163,7 +161,6 @@ const ProfileScreen = (props) => {
       data,
     )
       .then((res) => {
-        console.log(res.data.data);
         const newUser = res.data.data;
         setUser(props.user);
         user.address = newUser.address;
@@ -227,11 +224,12 @@ const ProfileScreen = (props) => {
         <View style={styles.userInfoSection}>
           <View style={{flexDirection: 'row', marginTop: 15}}>
             <Avatar.Image
+              defaultSource={require('../Image/pre.gif')}
               source={{
                 uri:
                   props.user.photo !== null
                     ? Config.API_URL_BASE3 +
-                      Config.API_FILE +
+                      Config.API_FILE_MINI +
                       props.user.photo.uid
                     : '',
               }}

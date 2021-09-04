@@ -18,6 +18,7 @@ import {
   Modal,
   Platform,
   ScrollView,
+  Button,
 } from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {connect} from 'react-redux';
@@ -77,6 +78,7 @@ const HomeScreen = (props) => {
   const [openOfferIndex, setOpenOfferIndex] = useState(null);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [pageSize, setPageSize] = useState(15);
+  const [commentLimit, setCommentLimit] = useState(15);
   const [pageNo, setPageNo] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -91,6 +93,9 @@ const HomeScreen = (props) => {
   const [statusBarStyle, setStatusBarStyle] = useState(STYLES[0]);
   const [sendingComment, setSendingComment] = useState(false);
   const [showSubComment, setShowSubComment] = useState(-1);
+  const [commentOffset, setCommentOffset] = useState(0);
+  const [canLoadMoreComment, setCanLoadMoreComment] = useState(false);
+  const [loadingMoreComment, setLoadingMoreComment] = useState(false);
   const [showSecondDialogReaction, setShowSecondDialogReaction] = useState(
     false,
   );
@@ -199,7 +204,10 @@ const HomeScreen = (props) => {
             <Image
               style={stylesItem.avatar}
               source={{
-                uri: Config.API_URL_BASE3 + Config.API_FILE + item.avatar?.uid,
+                uri:
+                  Config.API_URL_BASE3 +
+                  Config.API_FILE_MINI +
+                  item.avatar?.uid,
               }}
               defaultSource={require('../Image/user.jpeg')}
             />
@@ -247,7 +255,9 @@ const HomeScreen = (props) => {
         <View style={stylesItem.imageContainer}>
           <ScaledImage
             height={400}
-            source={Config.API_URL_BASE3 + Config.API_FILE + item.avatar?.uid}
+            source={
+              Config.API_URL_BASE3 + Config.API_FILE_MEDIUM + item.avatar?.uid
+            }
             defaultSource={require('../Image/pre.gif')}
           />
         </View>
@@ -274,7 +284,7 @@ const HomeScreen = (props) => {
           <TouchableOpacity onPress={() => makeReaction('AMAZING', item.id)}>
             <FontAwesome5Icon
               name="grin-squint"
-              color="#dc4311"
+              color="#e8304a"
               backgroundColor="white"
               style={stylesItem.reactionIcon}
             />
@@ -291,7 +301,7 @@ const HomeScreen = (props) => {
             <FontAwesome5Icon
               lineBreakMode={false}
               name="angry"
-              color="#dc4311"
+              color="#e8304a"
               backgroundColor="white"
               style={stylesItem.reactionIcon}
             />
@@ -344,7 +354,7 @@ const HomeScreen = (props) => {
               uri:
                 comment.user !== null && comment.user.photo !== null
                   ? Config.API_URL_BASE3 +
-                    Config.API_FILE +
+                    Config.API_FILE_MINI +
                     comment.user.photo.uid
                   : defaultUser,
             }}
@@ -424,7 +434,7 @@ const HomeScreen = (props) => {
                             uri:
                               comment2.user !== null
                                 ? Config.API_URL_BASE3 +
-                                  Config.API_FILE +
+                                  Config.API_FILE_MINI +
                                   comment2.user.photo.uid
                                 : defaultUser,
                           }}
@@ -512,7 +522,7 @@ const HomeScreen = (props) => {
         .catch((error) => {
           setHasLoaded(true);
           setLoading(false);
-          console.log(error.response.data.error);
+          console.log(error.response?.data?.error);
           alert('Oups an error occure');
         });
     }
@@ -547,8 +557,8 @@ const HomeScreen = (props) => {
         .then((res2) => {})
         .catch((error) => {
           setLoadingMore(false);
-          console.log(error.response.data.error);
-          alert(error.response.data.error);
+          console.log(error.response?.data?.error);
+          alert(error.response?.data?.error);
         });
     }
   };
@@ -628,8 +638,13 @@ const HomeScreen = (props) => {
     const url =
       Config.API_URL_BASE4 +
       Config.API_COMPANY_GET_COMMENT +
-      '/' +
-      offers[index].id;
+      '?offerId=' +
+      offers[index].id +
+      '&pageSize=' +
+      pageSize +
+      '&pageno=' +
+      commentOffset +
+      '&sortby=id';
     if (loading === false) {
       setOpenOffer(offers[index]);
       setOpenOfferIndex(index);
@@ -637,15 +652,23 @@ const HomeScreen = (props) => {
       API.get(url)
         .then((res) => {
           setLoading(false);
-          if (res.data.data !== undefined) {
-            setDataComment(res.data.data);
+          if (res.data.data.content !== undefined) {
+            setDataComment(res.data.data.content);
+            setCommentOffset(commentOffset + 1);
+            if (res.data.data.content.length >= pageSize) {
+              setCanLoadMoreComment(true);
+            } else {
+              setCanLoadMoreComment(false);
+            }
             setDataProviderComment(
               new DataProvider((r1, r2) => {
                 return r1 !== r2;
-              }).cloneWithRows(res.data.data),
+              }).cloneWithRows(res.data.data.content),
             );
           } else {
+            console.log('no');
             setDataComment([]);
+            setCanLoadMoreComment(false);
             setDataProviderComment(
               new DataProvider((r1, r2) => {
                 return r1 !== r2;
@@ -659,8 +682,61 @@ const HomeScreen = (props) => {
           setLoading(false);
           console.log(error);
           if (error.response !== undefined) {
-            console.log(error.response.data.error);
-            alert(error.response.data.error);
+            console.log(error.response?.data?.error);
+            alert(error.response?.data?.error);
+          } else {
+            console.log(error);
+            alert('Oups an error occured');
+          }
+        });
+    }
+  };
+  const loadMoreComment = () => {
+    const url =
+      Config.API_URL_BASE4 +
+      Config.API_COMPANY_GET_COMMENT +
+      '?offerId=' +
+      offers[openOfferIndex].id +
+      '&pageSize=' +
+      pageSize +
+      '&pageno=' +
+      commentOffset +
+      '&sortby=id';
+    if (loading === false && loadingMoreComment === false) {
+      setLoadingMoreComment(true);
+      API.get(url)
+        .then((res) => {
+          setLoadingMoreComment(false);
+          if (res.data.data.content !== undefined) {
+            const result = res.data.data.content;
+            result.forEach((e) => {
+              dataComment.push(e);
+            });
+            setDataComment(dataComment);
+            setCommentOffset(commentOffset + 1);
+            if (result.length >= commentLimit) {
+              setCanLoadMoreComment(true);
+            } else {
+              setCanLoadMoreComment(false);
+            }
+            setDataProviderComment(
+              new DataProvider((r1, r2) => {
+                return r1 !== r2;
+              }).cloneWithRows(dataComment),
+            );
+          } else {
+            setCanLoadMoreComment(false);
+            console.log('no');
+          }
+
+          setVisibleComment(true);
+        })
+        .catch((error) => {
+          setLoadingMoreComment(false);
+          console.log(error);
+          if (error.response !== undefined) {
+            console.log(error.response?.data?.error);
+            alert(error.response?.data?.error);
           } else {
             console.log(error);
             alert('Oups an error occured');
@@ -678,6 +754,7 @@ const HomeScreen = (props) => {
     setVisibleComment(false);
     setOpenOffer(null);
     setOpenOfferIndex(null);
+    setCommentOffset(0);
   };
   const renderItem = (index, item) => {
     return (
@@ -722,7 +799,8 @@ const HomeScreen = (props) => {
         </Card.Content>
         <Card.Cover
           source={{
-            uri: Config.API_URL_BASE3 + Config.API_FILE + item.avatar?.uid,
+            uri:
+              Config.API_URL_BASE3 + Config.API_FILE_MEDIUM + item.avatar?.uid,
           }}
         />
         <Card.Actions
@@ -801,8 +879,8 @@ const HomeScreen = (props) => {
         .then((res2) => {})
         .catch((error) => {
           setLoading(false);
-          console.log(error.response.data.error);
-          alert(error.response.data.error);
+          console.log(error.response?.data?.error);
+          alert(error.response?.data?.error);
         });
     }
   };
@@ -831,8 +909,8 @@ const HomeScreen = (props) => {
         .then((res2) => {})
         .catch((error) => {
           setLoading(false);
-          console.log(error.response.data.error);
-          alert(error.response.data.error);
+          console.log(error.response?.data?.error);
+          alert(error.response?.data?.error);
         });
     }
   };
@@ -892,8 +970,8 @@ const HomeScreen = (props) => {
         .then((res2) => {})
         .catch((error) => {
           setLoading(false);
-          console.log(error.response.data.error);
-          alert(error.response.data.error);
+          console.log(error.response?.data?.error);
+          alert(error.response?.data?.error);
         });
     }
   };
@@ -1025,60 +1103,6 @@ const HomeScreen = (props) => {
             )}
             <Provider theme={theme}>
               <Portal>
-                <Dialog visible={visibleAction} onDismiss={hideDialogAction}>
-                  <Dialog.Content style={{flexDirection: 'row'}}>
-                    <TouchableHighlight
-                      activeOpacity={0.9}
-                      style={{height: 50, width: '20%'}}
-                      onPress={() => makeReaction('LIKE')}>
-                      <Image
-                        style={{height: 50, width: 50}}
-                        source={require('../Image/like.png')}
-                      />
-                    </TouchableHighlight>
-                    <TouchableHighlight
-                      activeOpacity={0.6}
-                      style={{height: 50, width: '20%'}}
-                      onPress={() => makeReaction('INLOVE')}>
-                      <Image
-                        style={{height: 50, width: 50}}
-                        source={require('../Image/heart.png')}
-                      />
-                    </TouchableHighlight>
-                    <TouchableHighlight
-                      activeOpacity={0.6}
-                      style={{height: 50, width: '20%'}}
-                      onPress={() => makeReaction('AMAZING')}>
-                      <Image
-                        style={{height: 50, width: 50}}
-                        source={require('../Image/laught.png')}
-                      />
-                    </TouchableHighlight>
-                    <TouchableHighlight
-                      activeOpacity={0.6}
-                      style={{height: 50, width: '20%'}}
-                      onPress={() => makeReaction('SAD')}>
-                      <Image
-                        style={{height: 50, width: 50}}
-                        source={require('../Image/bored.png')}
-                      />
-                    </TouchableHighlight>
-                    <TouchableHighlight
-                      activeOpacity={0.6}
-                      style={{height: 50, width: '20%'}}
-                      onPress={() => makeReaction('ANGRY')}>
-                      <Image
-                        style={{height: 50, width: 50}}
-                        source={require('../Image/angry.png')}
-                      />
-                    </TouchableHighlight>
-                  </Dialog.Content>
-                  <Dialog.Actions>
-                    <ButtonPaper onPress={hideDialogAction}>
-                      {I18n.t('cancel')}
-                    </ButtonPaper>
-                  </Dialog.Actions>
-                </Dialog>
                 {openOffer !== null && (
                   <Modal
                     style={{
@@ -1101,7 +1125,7 @@ const HomeScreen = (props) => {
                         style={{
                           height: 60,
                           width: variables.deviceWidth,
-                          backgroundColor: '#f6f5f5',
+                          backgroundColor: 'transparent',
                           flexDirection: 'row',
                           justifyContent: 'space-between',
                           // padding: 4,
@@ -1120,7 +1144,7 @@ const HomeScreen = (props) => {
                             style={{paddingTop: 5}}
                             onPress={() => hideModalComment()}
                             mode={'text'}>
-                            <Icon name="arrow-left" size={34} color="#000" />
+                            <Icon name="arrow-left" size={32} color="#000" />
                           </ButtonPaper>
                         </View>
                         <View
@@ -1158,7 +1182,7 @@ const HomeScreen = (props) => {
                             style={{paddingTop: 5}}
                             onPress={() => hideModalComment()}
                             mode={'text'}>
-                            <Icon name="dots-vertical" size={34} color="#000" />
+                            <Icon name="dots-vertical" size={32} color="#000" />
                           </ButtonPaper>
                         </View>
                       </View>
@@ -1197,7 +1221,7 @@ const HomeScreen = (props) => {
                                     height={400}
                                     source={
                                       Config.API_URL_BASE3 +
-                                      Config.API_FILE +
+                                      Config.API_FILE_MEDIUM +
                                       openOffer.avatar?.uid
                                     }
                                     defaultSource={require('../Image/pre.gif')}
@@ -1233,7 +1257,7 @@ const HomeScreen = (props) => {
                                     onPress={() => makeReaction2('AMAZING')}>
                                     <FontAwesome5Icon
                                       name="grin-squint"
-                                      color="#dc4311"
+                                      color="#e8304a"
                                       backgroundColor="white"
                                       style={stylesItem.reactionIcon}
                                     />
@@ -1252,7 +1276,7 @@ const HomeScreen = (props) => {
                                     <FontAwesome5Icon
                                       lineBreakMode={false}
                                       name="angry"
-                                      color="#dc4311"
+                                      color="#e8304a"
                                       backgroundColor="white"
                                       style={stylesItem.reactionIcon}
                                     />
@@ -1299,6 +1323,47 @@ const HomeScreen = (props) => {
                               </View>
                             );
                           }}
+                          ListFooterComponentStyle={{
+                            backgroundColor: '#fff',
+                            marginTop: 10,
+                          }}
+                          ListFooterComponent={() => {
+                            return (
+                              <View
+                                style={{
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                }}>
+                                {canLoadMoreComment === true && (
+                                  <TouchableOpacity
+                                    onPress={() => {
+                                      loadMoreComment();
+                                    }}
+                                    style={{
+                                      alignItems: 'center',
+                                      backgroundColor: '#ddd',
+                                      padding: 5,
+                                      width: 'auto',
+                                      borderRadius: 5,
+                                    }}>
+                                    <Text style={{fontSize: 12}}>
+                                      {I18n.t('loading_more')}
+                                      {loadingMoreComment && (
+                                        <ActivityIndicator
+                                          animating={true}
+                                          color="#007bff"
+                                          size="small"
+                                          style={
+                                            styles.activityIndicatorLoadingComment
+                                          }
+                                        />
+                                      )}
+                                    </Text>
+                                  </TouchableOpacity>
+                                )}
+                              </View>
+                            );
+                          }}
                           style={styles.root}
                           data={dataComment}
                           ItemSeparatorComponent={() => {
@@ -1321,7 +1386,7 @@ const HomeScreen = (props) => {
                                         comment.user !== null &&
                                         comment.user.photo !== null
                                           ? Config.API_URL_BASE3 +
-                                            Config.API_FILE +
+                                            Config.API_FILE_MINI +
                                             comment.user.photo.uid
                                           : defaultUser,
                                       priority: FastImage.priority.low,
@@ -1423,7 +1488,7 @@ const HomeScreen = (props) => {
                                                       uri:
                                                         comment2.user !== null
                                                           ? Config.API_URL_BASE3 +
-                                                            Config.API_FILE +
+                                                            Config.API_FILE_MINI +
                                                             comment2.user.photo
                                                               .uid
                                                           : defaultUser,
@@ -1496,7 +1561,7 @@ const HomeScreen = (props) => {
                           source={{
                             uri:
                               Config.API_URL_BASE3 +
-                              Config.API_FILE +
+                              Config.API_FILE_MINI +
                               props.user?.photo?.uid,
                             priority: FastImage.priority.low,
                             cache: FastImage.cacheControl.immutable,
@@ -1569,6 +1634,11 @@ const styles = StyleSheet.create({
   activityIndicator: {
     alignItems: 'center',
     height: 80,
+  },
+  activityIndicatorLoadingComment: {
+    alignItems: 'center',
+    marginLeft: 5,
+    marginBottom: -5,
   },
   activityIndicatorComment: {
     alignItems: 'center',

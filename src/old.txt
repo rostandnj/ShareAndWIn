@@ -1,0 +1,56 @@
+<ScrollView>
+        <View style={[styles.container]}>
+          <View
+            style={{
+              backgroundColor: '#fff',
+              height: variables.deviceHeight - 50,
+              width: variables.deviceWidth,
+              marginTop: 50,
+            }}>
+            <View
+              style={{
+                display: 'none',
+                height: 50,
+                flexDirection: 'row',
+                backgroundColor: '#47a2f3',
+                paddingTop: Platform.OS === 'ios' ? 5 : 5,
+              }}>
+              <IconButton
+                icon="account-group"
+                color={'#fff'}
+                onPress={() => {}}
+              />
+              <Text
+                style={{
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  color: '#fff',
+                  marginTop: 10,
+                }}>
+                {I18n.t('groups')}
+              </Text>
+              <ActivityIndicator
+                animating={loading}
+                color="#fff"
+                size="small"
+                style={styles.activityIndicator}
+              />
+            </View>
+            {dataProvider.getSize() > 0 && (
+              <RecyclerListView
+                layoutProvider={layoutProvider}
+                isHorizontal={false}
+                dataProvider={dataProvider}
+                rowRenderer={rowRenderer}
+                renderAheadOffset={Platform.OS === 'ios' ? 15 * 380 : 15 * 365}
+                onEndReachedThreshold={
+                  Platform.OS === 'ios'
+                    ? variables.deviceHeight * 2
+                    : variables.deviceHeight
+                }
+                /*renderFooter={renderFooter}*/
+              />
+            )}
+          </View>
+        </View>
+      </ScrollView>
