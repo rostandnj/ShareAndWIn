@@ -59,7 +59,10 @@ export default {
   comment_post: 'Comment ...',
   respond_to_comment: 'Reply to this comment ...',
   groups: 'Groups',
+  my_groups: 'My Groups',
+  suggested: 'Suggestions',
   password_link_sent: 'Reset password link sent successfully',
   login_screen: 'Login',
   loading_more: 'loading more',
+  nothing_now: 'no data for the moment',
 };

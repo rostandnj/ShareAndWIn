@@ -16,7 +16,6 @@ const SplashScreen = (props) => {
   //props.checkUser();
   useEffect(() => {
     AsyncStorage.getItem('user').then((userToken) => {
-      //console.log(userToken);
       if (userToken !== null) {
         let url = Config.API_URL_BASE1 + Config.API_USER_PROFILE;
         API.defaults.headers.Authorization =
@@ -29,6 +28,7 @@ const SplashScreen = (props) => {
               Config.API_URL_BASE4 + Config.API_Loyality + res.data.data.id,
             )
               .then((res2) => {
+                console.log('ok');
                 res.data.data.loyalTy = res2.data.data;
                 //setUser(res.data.data);
                 props.isLogin(res.data.data, 'en');
@@ -36,17 +36,20 @@ const SplashScreen = (props) => {
               })
               .then((res2) => {})
               .catch((error) => {
+                console.log('bad');
+                //console.log(error.response.data);
                 console.log(error.response.data);
               });
           })
           .catch((error) => {
-            console.log(error.response.data);
-            Alert.alert(
+            console.log('bad 2');
+            //console.log(error.response.data);
+            /*Alert.alert(
               'Message',
               error.response.data.error,
               [{text: 'OK', onPress: () => {}}],
               {cancelable: true},
-            );
+            );*/
             props.navigation.navigate('Auth');
           });
       } else {

@@ -22,6 +22,7 @@ export const API_COMPANY_GET_COMMENT_OLD = 'company/comments';
 export const API_COMPANY_GET_COMMENT = 'company/offerCommentInOfferPage';
 export const API_COMPANY_MAKE_COMMENT = 'company/offer/comment';
 export const API_USER_GROUPS = 'group/usersGroup/';
+export const API_ALL_GROUPS = 'group/page/';
 
 const Config = {
   API_URL_BASE1,
@@ -44,5 +45,6 @@ const Config = {
   API_COMPANY_GET_COMMENT,
   API_COMPANY_MAKE_COMMENT,
   API_USER_GROUPS,
+  API_ALL_GROUPS,
 };
 export default Config;

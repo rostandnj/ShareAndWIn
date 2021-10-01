@@ -59,7 +59,10 @@ export default {
   comment_post: 'Commenter ...',
   respond_to_comment: 'Répondre à ce commentaire ...',
   groups: 'Groupes',
+  my_groups: 'Mes Groupes',
+  suggested: 'Suggestions',
   password_link_sent: 'Lien de réinitialisation du mot de passe envoyé',
   login_screen: 'Connexion',
   loading_more: 'afficher plus',
+  nothing_now: 'aucune donnée pour le moment',
 };

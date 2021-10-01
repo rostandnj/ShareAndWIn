@@ -1061,7 +1061,7 @@ const HomeScreen = (props) => {
               borderRadius={0}
               progress={1}
               useNativeDriver={true}
-              color={'#fff'}
+              color={'#a4d0ef'}
               width={variables.deviceWidth}
             />
           </View>
