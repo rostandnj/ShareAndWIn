@@ -65,4 +65,10 @@ export default {
   login_screen: 'Login',
   loading_more: 'loading more',
   nothing_now: 'no data for the moment',
+  show: 'Show',
+  subscribe: 'Subscribe',
+  unsubscribe: 'Unsubscribe',
+  operation_done: 'Operation done',
+  group_notification: 'Group notification',
+  chat_notification: 'Chat notification',
 };

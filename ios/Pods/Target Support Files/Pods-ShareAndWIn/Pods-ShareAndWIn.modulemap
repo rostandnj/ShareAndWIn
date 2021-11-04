@@ -1,0 +1,6 @@
+module Pods_ShareAndWIn {
+  umbrella header "Pods-ShareAndWIn-umbrella.h"
+
+  export *
+  module * { export * }
+}

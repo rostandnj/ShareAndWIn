@@ -23,12 +23,41 @@ import {connect} from 'react-redux';
 import SigninAction from './../redux/actions/signin';
 import UserAction from './../redux/actions/user';
 import isPlainObject from 'react-redux/lib/utils/isPlainObject';
+import OAuthManager from 'react-native-oauth';
 
 const LoginScreen = (props) => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
 
   const passwordInputRef = createRef();
+  const manager = new OAuthManager('ushareandwin');
+  manager
+    .configure({
+      facebook: Config.facebook,
+      google: Config.google,
+    })
+    .then((r) => {});
+
+  const loginGoogle = () => {
+    manager
+      .authorize('google', {scopes: 'email'})
+      .then((resp) => {
+        console.log(resp);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const loginFacebook = () => {
+    manager
+      .authorize('facebook', {scopes: 'email'})
+      .then((resp) => {
+        console.log(resp);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     if (isPlainObject(props.data)) {
@@ -116,7 +145,7 @@ const LoginScreen = (props) => {
                   name="facebook"
                   backgroundColor="#3b5998"
                   borderRadius={30}
-                  onPress={() => {}}>
+                  onPress={() => loginFacebook()}>
                   {I18n.t('login_facebook')}
                 </Icon.Button>
                 <Icon.Button
@@ -124,7 +153,7 @@ const LoginScreen = (props) => {
                   name="google"
                   borderRadius={30}
                   backgroundColor="#DD4B39"
-                  onPress={() => {}}>
+                  onPress={() => loginGoogle()}>
                   {I18n.t('login_google')}
                 </Icon.Button>
               </View>

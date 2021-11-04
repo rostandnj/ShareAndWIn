@@ -15,6 +15,8 @@ import {connect} from 'react-redux';
 import * as RootNavigation from './../../rootNavigation';
 import AsyncStorage from '@react-native-community/async-storage';
 import API from '../../api/fetch';
+import Config from '../../var/config';
+import {DataProvider} from 'recyclerlistview';
 
 const Tab = createBottomTabNavigator();
 
@@ -25,6 +27,27 @@ const handleBackButton = () => {
 
 const BottomTabNavigator = (props) => {
   const [notif, setNotif] = useState(0);
+
+  const [userId, setUserId] = useState(null);
+  useEffect(() => {
+    AsyncStorage.getItem('user').then((uid) => {
+      setUserId(JSON.parse(uid).userId);
+      let url =
+        Config.API_URL_BASE1 +
+        Config.API_NOTIFICATION_UNREAD_NUMBER +
+        JSON.parse(uid).userId;
+      API.get(url)
+        .then((res) => {
+          let result = res.data.data;
+          setNotif(result.length);
+        })
+        .then((res2) => {})
+        .catch((error) => {
+          console.log(error.response?.data?.error);
+          alert('Oups an error occure');
+        });
+    });
+  }, [notif, props]);
   return (
     <Tab.Navigator
       initialRouteName={'home'}

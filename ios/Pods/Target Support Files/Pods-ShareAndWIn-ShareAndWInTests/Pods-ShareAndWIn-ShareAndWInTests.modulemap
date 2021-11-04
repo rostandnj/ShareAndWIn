@@ -1,0 +1,6 @@
+module Pods_ShareAndWIn_ShareAndWInTests {
+  umbrella header "Pods-ShareAndWIn-ShareAndWInTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

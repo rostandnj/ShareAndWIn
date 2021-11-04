@@ -65,4 +65,8 @@ export default {
   login_screen: 'Connexion',
   loading_more: 'afficher plus',
   nothing_now: 'aucune donnée pour le moment',
+  show: 'Afficher',
+  subscribe: 'Rejoindre',
+  unsubscribe: 'Quitter',
+  operation_done: 'Opération effectuée',
 };

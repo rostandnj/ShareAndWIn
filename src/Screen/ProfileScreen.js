@@ -579,6 +579,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 0,
     marginTop: -50,
+    height: variables.deviceHeight,
   },
   stretch: {
     width: 300,
