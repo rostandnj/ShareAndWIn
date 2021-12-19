@@ -1,22 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {View} from 'react-native';
 
 import HomeScreen from './../HomeScreen';
 import GroupScreen from './../GroupScreen';
-import FriendScreen from './../FriendScreen';
 import NotificationScreen from './../NotificationScreen';
 import ProfileScreen from './../ProfileScreen';
 import {StyleSheet, BackHandler} from 'react-native';
 import i18n from './../../i18n/i18n';
-import SigninAction from '../../redux/actions/signin';
 import UserAction from '../../redux/actions/user';
 import {connect} from 'react-redux';
 import * as RootNavigation from './../../rootNavigation';
 import AsyncStorage from '@react-native-community/async-storage';
 import API from '../../api/fetch';
 import Config from '../../var/config';
-import {DataProvider} from 'recyclerlistview';
+import GroupPostScreen from './../GroupPostScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -44,7 +43,7 @@ const BottomTabNavigator = (props) => {
         .then((res2) => {})
         .catch((error) => {
           console.log(error.response?.data?.error);
-          alert('Oups an error occure');
+          alert('Oups an error occur');
         });
     });
   }, [notif, props]);
@@ -85,6 +84,11 @@ const BottomTabNavigator = (props) => {
                 ? 'ios-people-circle'
                 : 'ios-people-circle-outline';
               break;
+            case 'search':
+              iconName = focused
+                ? 'ios-people-circle'
+                : 'ios-people-circle-outline';
+              break;
           }
 
           // You can return any component that you like here!
@@ -102,6 +106,15 @@ const BottomTabNavigator = (props) => {
         name="home"
         component={HomeScreen}
         options={{tabBarLabel: i18n.t('icon_home')}}
+      />
+      <Tab.Screen
+        name="search"
+        component={GroupPostScreen}
+        options={{
+          tabBarLabel: i18n.t('icon_search'),
+          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
+          tabBarVisible: true,
+        }}
       />
       <Tab.Screen
         name="groups"

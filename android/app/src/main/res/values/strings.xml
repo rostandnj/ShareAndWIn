@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ShareAndWIn</string>
+    <string name="facebook_app_id">718863185149987</string>
+    <string name="facebook_client_token">718863185149987|UMvxRaGXoTmLbaBQe2wvcvQpTqA</string>
 </resources>

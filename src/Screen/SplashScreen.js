@@ -28,7 +28,7 @@ const SplashScreen = (props) => {
               Config.API_URL_BASE4 + Config.API_Loyality + res.data.data.id,
             )
               .then((res2) => {
-                console.log('ok');
+                console.log('welcome');
                 res.data.data.loyalTy = res2.data.data;
                 //setUser(res.data.data);
                 props.isLogin(res.data.data, 'en');

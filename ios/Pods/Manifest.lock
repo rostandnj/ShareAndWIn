@@ -1,8 +1,15 @@
 PODS:
+  - AppAuth (1.4.0):
+    - AppAuth/Core (= 1.4.0)
+    - AppAuth/ExternalUserAgent (= 1.4.0)
+  - AppAuth/Core (1.4.0)
+  - AppAuth/ExternalUserAgent (1.4.0)
   - boost-for-react-native (1.63.0)
   - BVLinearGradient (2.5.6):
     - React
   - DoubleConversion (1.1.6)
+  - FBAEMKit (12.1.0):
+    - FBSDKCoreKit_Basics (= 12.1.0)
   - FBLazyVector (0.64.2)
   - FBReactNativeSpec (0.64.2):
     - RCT-Folly (= 2020.01.13.00)
@@ -11,7 +18,23 @@ PODS:
     - React-Core (= 0.64.2)
     - React-jsi (= 0.64.2)
     - ReactCommon/turbomodule/core (= 0.64.2)
+  - FBSDKCoreKit (12.1.0):
+    - FBAEMKit (= 12.1.0)
+    - FBSDKCoreKit_Basics (= 12.1.0)
+  - FBSDKCoreKit_Basics (12.1.0)
+  - FBSDKLoginKit (12.1.0):
+    - FBSDKCoreKit (= 12.1.0)
+  - FBSDKShareKit (12.1.0):
+    - FBSDKCoreKit (= 12.1.0)
   - glog (0.3.5)
+  - GoogleSignIn (6.0.2):
+    - AppAuth (~> 1.4)
+    - GTMAppAuth (~> 1.0)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - GTMAppAuth (1.2.2):
+    - AppAuth/Core (~> 1.4)
+    - GTMSessionFetcher/Core (~> 1.5)
+  - GTMSessionFetcher/Core (1.7.0)
   - libwebp (1.2.0):
     - libwebp/demux (= 1.2.0)
     - libwebp/mux (= 1.2.0)
@@ -214,6 +237,20 @@ PODS:
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
   - React-jsinspector (0.64.2)
+  - react-native-fbsdk-next (6.1.1):
+    - React-Core
+    - react-native-fbsdk-next/Core (= 6.1.1)
+    - react-native-fbsdk-next/Login (= 6.1.1)
+    - react-native-fbsdk-next/Share (= 6.1.1)
+  - react-native-fbsdk-next/Core (6.1.1):
+    - FBSDKCoreKit (~> 12.1.0)
+    - React-Core
+  - react-native-fbsdk-next/Login (6.1.1):
+    - FBSDKLoginKit (~> 12.1.0)
+    - React-Core
+  - react-native-fbsdk-next/Share (6.1.1):
+    - FBSDKShareKit (~> 12.1.0)
+    - React-Core
   - react-native-image-picker (3.1.2):
     - React
   - react-native-pager-view (5.4.7):
@@ -294,6 +331,9 @@ PODS:
     - SDWebImageWebPCoder (~> 0.6.1)
   - RNGestureHandler (1.10.3):
     - React-Core
+  - RNGoogleSignin (7.0.1):
+    - GoogleSignIn (~> 6.0.0)
+    - React-Core
   - RNImageColors (1.4.0):
     - React-Core
   - RNLocalize (2.0.1):
@@ -349,6 +389,7 @@ DEPENDENCIES:
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - GoogleSignIn
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -362,6 +403,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-fbsdk-next (from `../node_modules/react-native-fbsdk-next`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -381,6 +423,7 @@ DEPENDENCIES:
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - RNImageColors (from `../node_modules/react-native-image-colors`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -392,7 +435,16 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - AppAuth
     - boost-for-react-native
+    - FBAEMKit
+    - FBSDKCoreKit
+    - FBSDKCoreKit_Basics
+    - FBSDKLoginKit
+    - FBSDKShareKit
+    - GoogleSignIn
+    - GTMAppAuth
+    - GTMSessionFetcher
     - libwebp
     - SDWebImage
     - SDWebImageWebPCoder
@@ -430,6 +482,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-fbsdk-next:
+    :path: "../node_modules/react-native-fbsdk-next"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-pager-view:
@@ -468,6 +522,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fast-image"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNGoogleSignin:
+    :path: "../node_modules/@react-native-google-signin/google-signin"
   RNImageColors:
     :path: "../node_modules/react-native-image-colors"
   RNLocalize:
@@ -486,12 +542,21 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
+  AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
+  FBAEMKit: 56c0bb9b42e3747cd82b67934f0c2b19325382ea
   FBLazyVector: e686045572151edef46010a6f819ade377dfeb4b
   FBReactNativeSpec: bb73a4444ecec1c561ecb33577a18dbcfea67bf6
+  FBSDKCoreKit: 75368765d9c2303073145a7925dfaa9d60bcd77b
+  FBSDKCoreKit_Basics: 39865aff97e5f6951a78fb3e89dc4460e35e1895
+  FBSDKLoginKit: e993f97c7cc794c5da4056d8aec3c3d66033a727
+  FBSDKShareKit: 24943f539dbe382a6fad04952ea1aee29b100c1f
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
+  GoogleSignIn: fd381840dbe7c1137aa6dc30849a5c3e070c034a
+  GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
+  GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 6d3e854f0e7260a648badd0d44fc364bc9da9728
@@ -504,6 +569,7 @@ SPEC CHECKSUMS:
   React-jsi: 67747b9722f6dab2ffe15b011bcf6b3f2c3f1427
   React-jsiexecutor: 80c46bd381fd06e418e0d4f53672dc1d1945c4c3
   React-jsinspector: cc614ec18a9ca96fd275100c16d74d62ee11f0ae
+  react-native-fbsdk-next: 50b2ce0e56ef9b68cb0fd7f19072364296896c20
   react-native-image-picker: 8b4ccafb47395aabe98d3af89f089e020cacd6d1
   react-native-pager-view: a1486db1a8c9956437fc3a87cf2b56f44095a193
   react-native-safe-area-context: 86612d2c9a9e94e288319262d10b5f93f0b395f5
@@ -523,6 +589,7 @@ SPEC CHECKSUMS:
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
   RNFastImage: a7384db75df352500261e8e8f1ac2026def26102
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
+  RNGoogleSignin: 2a6f56a378c89e7b23f2aa7ca21ab598f832b91b
   RNImageColors: ad192374c6cd0ccbe4cc204fd252e9eb911a33c6
   RNLocalize: dcf0fdb332b37b0d24178e876a7ce4dbbc9c838d
   RNReanimated: 003a2a580759ca94a7b2a408db8889e350dc8a79
@@ -534,6 +601,6 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Yoga: 575c581c63e0d35c9a83f4b46d01d63abc1100ac
 
-PODFILE CHECKSUM: 27fa708b68978b9bbcd3d20d1d578108b95642ed
+PODFILE CHECKSUM: 0e856e5da4d5fe6a07f753766d393663c49f6096
 
 COCOAPODS: 1.10.1

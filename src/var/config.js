@@ -22,6 +22,7 @@ export const GCM_FCM_ID = '';
 export const APP_NAME_SLUT = '';
 export const API_REGISTRARTION = 'api/account/registration';
 export const API_LOGIN = 'auth/login';
+export const API_LOGIN_GOOGLE = 'auth/mobileAuth/';
 export const API_REGISTER = 'account/register';
 export const API_RESET_PASSWORD = 'account/newPasswdMail';
 export const API_USER_PROFILE = 'auth/me';
@@ -32,6 +33,8 @@ export const API_Loyality = 'company/offer/loyaltypoint/';
 export const API_UPDATE_PROFILE = 'account/update/';
 export const API_UPDATE_PROFILE_PICTURE = 'account/updateProfilPic';
 export const API_COMPANY_OFFERS = 'company/offer/page';
+export const API_COMPANY_OFFERS2 = 'company/offer/pageV2';
+export const API_SEARCH_OFFER = 'company/filterOffer';
 export const API_COMPANY_MAKE_REACTION = 'company/view/create';
 export const API_COMPANY_GET_COMMENT_OLD = 'company/comments';
 export const API_COMPANY_GET_COMMENT = 'company/offerCommentInOfferPage';
@@ -54,6 +57,7 @@ const Config = {
   API_URL_BASE4,
   APP_NAME,
   API_LOGIN,
+  API_LOGIN_GOOGLE,
   API_REGISTER,
   API_RESET_PASSWORD,
   API_USER_PROFILE,
@@ -73,5 +77,6 @@ const Config = {
   API_GROUP_MEMBERS,
   API_USER_NOTIFICATION,
   API_NOTIFICATION_UNREAD_NUMBER,
+  API_SEARCH_OFFER,
 };
 export default Config;

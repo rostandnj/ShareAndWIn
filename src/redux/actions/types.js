@@ -16,5 +16,6 @@ export const USER_IS_LOGIN_END = 'user-is-login-end';
 export const USER_IS_LOGIN_START = 'user-is-login-start';
 export const USER_IS_LOGIN = 'user-is-login';
 export const USER_UPDATE = 'user-update';
+export const USER_UPDATE_SEARCH = 'user-update-search';
 
 export const USER_LOGOUT = 'user-logout';

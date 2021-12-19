@@ -1,65 +1,47 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useState, useRef} from 'react';
 import {Image, View} from 'react-native';
 import variables from '../var/variables';
 import FastImage from 'react-native-fast-image';
 import ImageColors from 'react-native-image-colors';
-class ScaledImage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      color: '#c4c4c4',
-      source: {
-        uri: this.props.source,
-        priority: FastImage.priority.low,
-        cache: FastImage.cacheControl.immutable,
-      },
-    };
-  }
-
-  async UNSAFE_componentWillMount() {
-    /*Image.getSize(this.props.source, (width, height) => {
-      if (this.props.width && !this.props.height) {
-        this.setState({
-          width: this.props.width,
-          height: height * (this.props.width / width),
-        });
-      } else if (!this.props.width && this.props.height) {
-        this.setState({
-          width: width * (this.props.height / height),
-          height: this.props.height,
-        });
-      } else {
-        this.setState({width: width, height: height});
-      }
-    });*/
-    const result = await ImageColors.getColors(this.state.source, {
-      fallback: '#c4c4c4',
-      cache: true,
+const ScaledImage = (props) => {
+  const [color, setColor] = useState('transparent');
+  const [source, setSource] = useState({
+    uri: props.source,
+    priority: FastImage.priority.low,
+    cache: FastImage.cacheControl.immutable,
+  });
+  useEffect(() => {
+    let isMounted = true; // note mutable flag
+    ImageColors.getColors(source, {
+      fallback: '#fff',
+      cache: false,
       key: 'unique_key',
+    }).then((result) => {
+      if (isMounted) {
+        setColor(result.dominant);
+      } // add conditional check
     });
-    let color = '#000';
-    this.setState({color: result.dominant});
-  }
-
-  render() {
-    return (
-      <View
+    return () => {
+      isMounted = false;
+    }; // cleanup toggles value, if unmounted
+  }, [source]);
+  return (
+    <View
+      style={{
+        height: 250,
+        width: variables.deviceWidth,
+        backgroundColor: color,
+      }}>
+      <FastImage
+        source={source}
+        resizeMode={FastImage.resizeMode.contain}
         style={{
           height: 250,
           width: variables.deviceWidth,
-          backgroundColor: this.state.color,
-        }}>
-        <FastImage
-          source={this.state.source}
-          resizeMode={FastImage.resizeMode.contain}
-          style={{
-            height: 250,
-            width: variables.deviceWidth,
-            ...this.props.style,
-          }}
-        />
-      </View>
-    );
-  }
-}
+          ...props.style,
+        }}
+      />
+    </View>
+  );
+};
 export default ScaledImage;

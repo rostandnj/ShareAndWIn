@@ -5,6 +5,7 @@ const initialState = {
   isLogin: false,
   lang: '',
   user: null,
+  searchData: {},
 };
 
 const userReducer = (state = initialState, action) => {
@@ -15,17 +16,24 @@ const userReducer = (state = initialState, action) => {
       return Object.assign({}, state, {
         isLogin: false,
         user: null,
+        searchData: '',
       });
 
     case types.USER_IS_LOGIN:
       return Object.assign({}, state, {
         isLogin: true,
         user: action.user,
+        searchData: '',
       });
     case types.USER_UPDATE:
       return Object.assign({}, state, {
         isLogin: true,
         user: action.user,
+        searchData: '',
+      });
+    case types.USER_UPDATE_SEARCH:
+      return Object.assign({}, state, {
+        searchData: action.searchData,
       });
 
     default:

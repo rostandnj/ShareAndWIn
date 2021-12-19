@@ -2,9 +2,7 @@ import * as ActionTypes from './types';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import API from './../../api/fetch';
-import {Alert} from 'react-native';
 import Config from './../../var/config';
-import isPlainObject from 'react-redux/lib/utils/isPlainObject';
 
 export const isLogin = (user, lang) => {
   return {
@@ -20,6 +18,14 @@ export const isUpdate = (user) => {
     type: ActionTypes.USER_UPDATE,
     isLogin: true,
     user: user,
+  };
+};
+
+export const updateSearchData = (data) => {
+  return {
+    type: ActionTypes.USER_UPDATE_SEARCH,
+    isLogin: true,
+    searchData: data,
   };
 };
 
@@ -74,5 +80,6 @@ const UserAction = {
   logout,
   CheckUserStatus,
   isUpdate,
+  updateSearchData,
 };
 export default UserAction;

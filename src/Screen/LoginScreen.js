@@ -23,41 +23,45 @@ import {connect} from 'react-redux';
 import SigninAction from './../redux/actions/signin';
 import UserAction from './../redux/actions/user';
 import isPlainObject from 'react-redux/lib/utils/isPlainObject';
-import OAuthManager from 'react-native-oauth';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import {LoginButton, AccessToken} from 'react-native-fbsdk-next';
 
 const LoginScreen = (props) => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
 
   const passwordInputRef = createRef();
-  const manager = new OAuthManager('ushareandwin');
-  manager
-    .configure({
-      facebook: Config.facebook,
-      google: Config.google,
-    })
-    .then((r) => {});
+  GoogleSignin.configure({
+    androidClientId: Config.google.client_id,
+    iosClientId:
+      '27879685572-eep2uth12psgsmehghjkmie06f0mscau.apps.googleusercontent.com',
+  });
 
-  const loginGoogle = () => {
-    manager
-      .authorize('google', {scopes: 'email'})
-      .then((resp) => {
-        console.log(resp);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const loginGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      //If login is successful you'll get user info object in userInfo below I'm just printing it to console. You can store this object in a usestate or use it as you like user is logged in.
+      if (userInfo.user !== undefined) {
+        console.log(userInfo.user);
+        props.signinOne(userInfo.user.id);
+      }
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        alert(I18n.t('canceled_signin'));
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        alert(I18n.t('google_signin_in_process'));
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        alert(I18n.t('play_service_not_vailable'));
+      } else {
+        alert(I18n.t('google_signin_wrong') + error.message);
+      }
+    }
   };
-  const loginFacebook = () => {
-    manager
-      .authorize('facebook', {scopes: 'email'})
-      .then((resp) => {
-        console.log(resp);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  const loginFacebook = () => {};
 
   useEffect(() => {
     if (isPlainObject(props.data)) {
@@ -139,17 +143,9 @@ const LoginScreen = (props) => {
                 onPress={handleSubmitPress}>
                 <Text style={styles.buttonTextStyle}>{I18n.t('login')}</Text>
               </TouchableOpacity>
-              <View style={styles.textBtn}>
+              <View style={[styles.textBtn, {}]}>
                 <Icon.Button
-                  style={{width: 130}}
-                  name="facebook"
-                  backgroundColor="#3b5998"
-                  borderRadius={30}
-                  onPress={() => loginFacebook()}>
-                  {I18n.t('login_facebook')}
-                </Icon.Button>
-                <Icon.Button
-                  style={{width: 130}}
+                  style={{width: '100%', flexDirection: 'row'}}
                   name="google"
                   borderRadius={30}
                   backgroundColor="#DD4B39"
@@ -191,6 +187,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     signin: (email, password) => dispatch(SigninAction.signin(email, password)),
+    signinOne: (email, password) => dispatch(SigninAction.signinOne(email)),
     isLogin: (user, lang) => dispatch(UserAction.isLogin(user, lang)),
   };
 };

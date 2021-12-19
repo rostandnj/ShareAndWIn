@@ -94,6 +94,46 @@ export const signin = (email, password) => {
   };
 };
 
+export const signinOne = (id) => {
+  return (dispatch) => {
+    dispatch(signInIsLoading(true, {email: id, password: ''}));
+
+    let ur = Config.API_URL_BASE1 + Config.API_LOGIN_GOOGLE + id;
+    console.log(ur);
+
+    API.get(ur, {})
+      .then(function (res) {
+        if ([201, 200].includes(res.status)) {
+          if (res.data.code === 200) {
+            console.log(res.data.data);
+            dispatch(isSignIn(true, res.data.data));
+          } else {
+            dispatch(signInHasError(true, I18n.t('login_error'), ''));
+          }
+        } else {
+          dispatch(signInHasError(true, I18n.t('login_error'), ''));
+        }
+      })
+      .catch(function (error) {
+        if (error.response && error.response.data) {
+          dispatch(signInHasError(true, error.response.data.message, ''));
+        } else {
+          console.log(error);
+          //console.log(JSON.stringify(error));
+          dispatch(signInHasError(true, I18n.t('network_error'), ''));
+          Alert.alert(
+            'Message',
+            I18n.t('network_error'),
+            [{text: 'OK', onPress: () => {}}],
+            {cancelable: true},
+          );
+        }
+
+        //dispatch(signInHasError(true,translate(error.response.data.message.message),""));
+      });
+  };
+};
+
 export const logout = () => {
   return (dispatch) => {
     dispatch(isSignIn(false, null));
@@ -102,6 +142,7 @@ export const logout = () => {
 
 const SigninAction = {
   signin,
+  signinOne,
   signInIsLoading,
   isSignIn,
   logout,
