@@ -35,6 +35,11 @@ const userReducer = (state = initialState, action) => {
       return Object.assign({}, state, {
         searchData: action.searchData,
       });
+    case types.USER_UPDATE_OPEN_OFFER:
+      const ob = Object.assign({}, state, {
+        openOffer: action.openOffer,
+      });
+      return ob;
 
     default:
       return state;

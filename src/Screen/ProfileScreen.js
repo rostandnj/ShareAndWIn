@@ -9,6 +9,8 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import {
   Avatar,
@@ -28,6 +30,14 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {
+  LineChart,
+  BarChart,
+  PieChart,
+  ProgressChart,
+  ContributionGraph,
+  StackedBarChart,
+} from 'react-native-chart-kit';
 
 import {connect} from 'react-redux';
 import I18n from './../i18n/i18n';
@@ -67,6 +77,7 @@ const ProfileScreen = (props) => {
   const [userAddress, setUserAddress] = useState('');
   const [userDescription, setUserDescription] = useState('');
   const [user, setUser] = useState(null);
+  const [isStatisticVisible, setIsStatisticVisible] = useState(false);
 
   const theme = {
     ...DefaultTheme,
@@ -193,15 +204,12 @@ const ProfileScreen = (props) => {
     setPicture('');
     setErrorPic('');
     launchImageLibrary(options, (response) => {
-      //console.log('Response = ', response);
-
       if (response.didCancel) {
         //console.log('User cancelled image picker');
       } else if (response.error) {
         //console.log('ImagePicker Error: ', response.error);
       } else if (response.customButton) {
         //console.log('User tapped custom button: ', response.customButton);
-        //alert(response.customButton);
       } else {
         // You can also display the image using data:
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
@@ -216,6 +224,10 @@ const ProfileScreen = (props) => {
         //const source = {uri: response.uri};
       }
     });
+  };
+
+  const hideModalStat = () => {
+    setIsStatisticVisible(false);
   };
 
   return (
@@ -288,6 +300,16 @@ const ProfileScreen = (props) => {
               {props.user.address}
             </Text>
           </View>
+          <View style={[styles.row, {marginLeft: -15}]}>
+            <Button
+              color={'#007bff'}
+              onPress={() => setIsStatisticVisible(true)}>
+              <Icon name="chart-line" color="#777777" size={20} />
+              <Text style={{color: '#777777', marginLeft: 40}}>
+                {I18n.t('statistic')}
+              </Text>
+            </Button>
+          </View>
         </View>
 
         <View style={styles.infoBoxWrapper}>
@@ -299,11 +321,7 @@ const ProfileScreen = (props) => {
                 borderRightWidth: 1,
               },
             ]}>
-            <Title>
-              {props.user.loyalTy != null
-                ? props.user.loyalTy.loyaltyPoints
-                : 0}
-            </Title>
+            <Title>{props.user?.loyaltyPoint}</Title>
             <Caption>{I18n.t('badge_loyalty_point')}</Caption>
           </View>
           <View
@@ -322,11 +340,7 @@ const ProfileScreen = (props) => {
             <Caption>{I18n.t('badge_loyalty_level')}</Caption>
           </View>
           <View style={styles.infoBox}>
-            <Title>
-              {props.user.loyalTy != null
-                ? props.user.loyalTy.marketingPoints
-                : 0}
-            </Title>
+            <Title>{props.user?.marketingPoint}</Title>
             <Caption>{I18n.t('badge_marketing_point')}</Caption>
           </View>
         </View>
@@ -346,161 +360,241 @@ const ProfileScreen = (props) => {
             <Modal
               visible={visible}
               onDismiss={hideModal}
-              contentContainerStyle={styles.modal}>
-              <Card>
-                <Card.Title
-                  title={I18n.t('update_your_profile')}
-                  subtitle=""
-                  left={() => <Avatar.Icon size={24} icon="account-edit" />}
-                />
-                <Card.Content>
-                  <TextInput
-                    label={I18n.t('birth_date')}
-                    value={userBirthday}
-                    onChangeText={(text) => setUserBirthday(text)}
-                  />
-                  <DropDownPicker
-                    items={[
-                      {
-                        label: I18n.t('man'),
-                        value: 'M',
-                      },
-                      {
-                        label: I18n.t('woman'),
-                        value: 'W',
-                      },
-                    ]}
-                    defaultValue={userGender}
-                    containerStyle={{height: 50}}
-                    style={{
-                      backgroundColor: '#ececec',
-                      borderBottomEndRadius: 0,
-                      borderBottomStartRadius: 0,
-                      borderBottomColor: '#9c9c9c',
-                      borderBottomWidth: 1,
+              contentContainerStyle={[styles.modal]}>
+              <ScrollView>
+                <Card>
+                  <Card.Title
+                    rightStyle={{marginRight: 20}}
+                    title={I18n.t('update_your_profile')}
+                    subtitle=""
+                    right={() => {
+                      return (
+                        <TouchableOpacity onPress={() => hideModal()}>
+                          <Avatar.Icon size={24} icon="close" />
+                        </TouchableOpacity>
+                      );
                     }}
-                    itemStyle={{
-                      justifyContent: 'flex-start',
-                    }}
-                    dropDownStyle={{backgroundColor: '#fafafa'}}
-                    onChangeItem={(item) => setUserGender(item.value)}
                   />
-                  <TextInput
-                    label={I18n.t('bio')}
-                    value={userDescription}
-                    onChangeText={(text) => setUserDescription(text)}
-                  />
-                  <TextInput
-                    label={I18n.t('country')}
-                    value={userCountry}
-                    onChangeText={(text) => setUserCountry(text)}
-                  />
-                  <TextInput
-                    label={I18n.t('city')}
-                    value={userCity}
-                    onChangeText={(text) => setUserCity(text)}
-                  />
-                  <TextInput
-                    label={I18n.t('address')}
-                    value={userAddress}
-                    onChangeText={(text) => setUserAddress(text)}
-                  />
-                  <TextInput
-                    label={I18n.t('phone')}
-                    value={userPhone}
-                    onChangeText={(text) => setUserPhone(text)}
-                  />
-
-                  <View
-                    style={{
-                      height: 50,
-                      backgroundColor: error !== '' ? '#007bff' : 'white',
-                      alignItems: 'center',
-                      paddingTop: 6,
-                    }}>
-                    <Text style={{color: 'white', fontSize: 16}}>{error}</Text>
-                  </View>
-                  <View style={{height: 50}}>
-                    <ActivityIndicator
-                      animating={updatingProfile}
-                      color="#007bff"
-                      size="large"
-                      style={styles.activityIndicator}
+                  <Card.Content>
+                    <TextInput
+                      label={I18n.t('birth_date')}
+                      value={userBirthday}
+                      onChangeText={(text) => setUserBirthday(text)}
                     />
-                  </View>
-                </Card.Content>
-                <Card.Actions>
-                  <Button
-                    icon="close"
-                    mode="container"
-                    onPress={() => hideModal()}>
-                    {I18n.t('cancel')}
-                  </Button>
-                  <Button
-                    mode="container"
-                    onPress={() => updateProfile()}
-                    style={{marginLeft: variables.deviceWidth / 2.2}}>
-                    {I18n.t('update')}
-                  </Button>
-                </Card.Actions>
-              </Card>
-            </Modal>
-            <Modal
-              visible={isPictureModalVisible}
-              onDismiss={() => setIsPictureModalVisible(false)}
-              contentContainerStyle={styles.modal}>
-              <Card>
-                <Card.Title
-                  title={I18n.t('update_picture')}
-                  subtitle=""
-                  left={() => <Avatar.Icon size={24} icon="account-edit" />}
-                />
-                <Card.Content>
-                  <View
-                    style={{
-                      paddingTop: 6,
-                      marginTop: 20,
-                      alignItems: 'center',
-                    }}>
-                    <Image style={styles.stretch} source={{uri: fileUri}} />
+                    <DropDownPicker
+                      items={[
+                        {
+                          label: I18n.t('man'),
+                          value: 'M',
+                        },
+                        {
+                          label: I18n.t('woman'),
+                          value: 'W',
+                        },
+                      ]}
+                      defaultValue={userGender}
+                      containerStyle={{height: 50}}
+                      style={{
+                        backgroundColor: '#ececec',
+                        borderBottomEndRadius: 0,
+                        borderBottomStartRadius: 0,
+                        borderBottomColor: '#9c9c9c',
+                        borderBottomWidth: 1,
+                      }}
+                      itemStyle={{
+                        justifyContent: 'flex-start',
+                      }}
+                      dropDownStyle={{backgroundColor: '#fafafa'}}
+                      onChangeItem={(item) => setUserGender(item.value)}
+                    />
+                    <TextInput
+                      label={I18n.t('bio')}
+                      value={userDescription}
+                      onChangeText={(text) => setUserDescription(text)}
+                    />
+                    <TextInput
+                      label={I18n.t('country')}
+                      value={userCountry}
+                      onChangeText={(text) => setUserCountry(text)}
+                    />
+                    <TextInput
+                      label={I18n.t('city')}
+                      value={userCity}
+                      onChangeText={(text) => setUserCity(text)}
+                    />
+                    <TextInput
+                      label={I18n.t('address')}
+                      value={userAddress}
+                      onChangeText={(text) => setUserAddress(text)}
+                    />
+                    <TextInput
+                      label={I18n.t('phone')}
+                      value={userPhone}
+                      onChangeText={(text) => setUserPhone(text)}
+                    />
 
                     <View
                       style={{
                         height: 50,
-                        backgroundColor: errorPic !== '' ? '#007bff' : 'white',
+                        backgroundColor: error !== '' ? '#a3cbf6' : 'white',
                         alignItems: 'center',
-                        paddingTop: 6,
-                        width: 300,
+                        paddingTop: 4,
                       }}>
                       <Text style={{color: 'white', fontSize: 16}}>
-                        {errorPic}
+                        {error}
                       </Text>
                     </View>
-                  </View>
-                  <View style={{height: 50}}>
-                    <ActivityIndicator
-                      animating={updatingProfile}
-                      color="#007bff"
-                      size="large"
-                      style={styles.activityIndicator}
-                    />
-                  </View>
-                </Card.Content>
-                <Card.Actions>
-                  <Button
-                    icon="close"
-                    mode="container"
-                    onPress={() => setIsPictureModalVisible(false)}>
-                    {I18n.t('cancel')}
-                  </Button>
-                  <Button
-                    mode="container"
-                    onPress={() => updateProfileImage()}
-                    style={{marginLeft: variables.deviceWidth / 2.2}}>
-                    {I18n.t('update')}
-                  </Button>
-                </Card.Actions>
-              </Card>
+                    <View style={{flexDirection: 'row'}}>
+                      <Button
+                        mode="compact"
+                        onPress={() => updateProfile()}
+                        style={{marginLeft: variables.deviceWidth / 2.2}}>
+                        {I18n.t('update')}
+                      </Button>
+                      <View style={{height: 50, width: 40, paddingTop: 10}}>
+                        <ActivityIndicator
+                          animating={updatingProfile}
+                          color="#007bff"
+                          size="small"
+                          style={styles.activityIndicator}
+                        />
+                      </View>
+                    </View>
+                  </Card.Content>
+                </Card>
+              </ScrollView>
+            </Modal>
+            <Modal
+              visible={isStatisticVisible}
+              onDismiss={() => setIsStatisticVisible(false)}
+              contentContainerStyle={styles.modal}
+              presentationStyle={'fullScreen'}>
+              <ScrollView>
+                <Card>
+                  <Card.Title
+                    rightStyle={{marginRight: 20}}
+                    title={I18n.t('statistic')}
+                    subtitle=""
+                    right={() => {
+                      return (
+                        <TouchableOpacity onPress={() => hideModalStat()}>
+                          <Avatar.Icon size={24} icon="close" />
+                        </TouchableOpacity>
+                      );
+                    }}
+                  />
+                  <Card.Content>
+                    <View style={{}}>
+                      <Text>{I18n.t('statistic_marketing')}</Text>
+                      <LineChart
+                        data={{
+                          labels: [
+                            I18n.t('month_1'),
+                            I18n.t('month_2'),
+                            I18n.t('month_3'),
+                            I18n.t('month_4'),
+                            I18n.t('month_5'),
+                            I18n.t('month_6'),
+                            I18n.t('month_7'),
+                            I18n.t('month_8'),
+                            I18n.t('month_9'),
+                            I18n.t('month_10'),
+                            I18n.t('month_11'),
+                            I18n.t('month_12'),
+                          ],
+                          datasets: [
+                            {
+                              data: props.user.marketingStat,
+                            },
+                          ],
+                        }}
+                        width={variables.deviceWidth * 0.95} // from react-native
+                        height={220}
+                        yAxisLabel=""
+                        yAxisSuffix=""
+                        yAxisInterval={1} // optional, defaults to 1
+                        chartConfig={{
+                          backgroundColor: '#0ebcef',
+                          backgroundGradientFrom: '#4bbae7',
+                          backgroundGradientTo: '#63aaf5',
+                          decimalPlaces: 1, // optional, defaults to 2dp
+                          color: (opacity = 1) =>
+                            `rgba(255, 255, 255, ${opacity})`,
+                          labelColor: (opacity = 1) =>
+                            `rgba(255, 255, 255, ${opacity})`,
+                          style: {
+                            borderRadius: 16,
+                          },
+                          propsForDots: {
+                            r: '2',
+                            strokeWidth: '1',
+                            stroke: '#ffffff',
+                          },
+                        }}
+                        bezier
+                        style={{
+                          marginVertical: 8,
+                          borderRadius: 16,
+                        }}
+                      />
+                    </View>
+                    <View style={{}}>
+                      <Text>{I18n.t('loyalty_marketing')}</Text>
+                      <LineChart
+                        data={{
+                          labels: [
+                            I18n.t('month_1'),
+                            I18n.t('month_2'),
+                            I18n.t('month_3'),
+                            I18n.t('month_4'),
+                            I18n.t('month_5'),
+                            I18n.t('month_6'),
+                            I18n.t('month_7'),
+                            I18n.t('month_8'),
+                            I18n.t('month_9'),
+                            I18n.t('month_10'),
+                            I18n.t('month_11'),
+                            I18n.t('month_12'),
+                          ],
+                          datasets: [
+                            {
+                              data: props.user.loyaltyStat,
+                            },
+                          ],
+                        }}
+                        width={variables.deviceWidth * 0.95} // from react-native
+                        height={220}
+                        yAxisLabel=""
+                        yAxisSuffix=""
+                        yAxisInterval={1} // optional, defaults to 1
+                        chartConfig={{
+                          backgroundColor: '#0ebcef',
+                          backgroundGradientFrom: '#4bbae7',
+                          backgroundGradientTo: '#63aaf5',
+                          decimalPlaces: 1, // optional, defaults to 2dp
+                          color: (opacity = 1) =>
+                            `rgba(255, 255, 255, ${opacity})`,
+                          labelColor: (opacity = 1) =>
+                            `rgba(255, 255, 255, ${opacity})`,
+                          style: {
+                            borderRadius: 16,
+                          },
+                          propsForDots: {
+                            r: '2',
+                            strokeWidth: '1',
+                            stroke: '#ffffff',
+                          },
+                        }}
+                        bezier
+                        style={{
+                          marginVertical: 8,
+                          borderRadius: 16,
+                        }}
+                      />
+                    </View>
+                  </Card.Content>
+                </Card>
+              </ScrollView>
             </Modal>
           </Portal>
         </Provider>
@@ -576,10 +670,12 @@ const styles = StyleSheet.create({
   },
   modal: {
     /*height: variables.deviceHeight,*/
-    backgroundColor: 'white',
+    flex: 1,
+    backgroundColor: 'transparent',
     padding: 0,
-    marginTop: -50,
-    height: variables.deviceHeight,
+    top: -variables.deviceStatusBar,
+    // marginTop: -50,
+    // height: variables.workingScreenHeigth,
   },
   stretch: {
     width: 300,

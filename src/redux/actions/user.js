@@ -29,6 +29,14 @@ export const updateSearchData = (data) => {
   };
 };
 
+export const updateOpenOffer = (data) => {
+  return {
+    type: ActionTypes.USER_UPDATE_OPEN_OFFER,
+    isLogin: true,
+    openOffer: data,
+  };
+};
+
 export const isLogout = () => {
   return {
     type: ActionTypes.USER_LOGOUT,
@@ -81,5 +89,6 @@ const UserAction = {
   CheckUserStatus,
   isUpdate,
   updateSearchData,
+  updateOpenOffer,
 };
 export default UserAction;

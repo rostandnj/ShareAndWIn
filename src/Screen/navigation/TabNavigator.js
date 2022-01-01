@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import API from '../../api/fetch';
 import Config from '../../var/config';
 import GroupPostScreen from './../GroupPostScreen';
+import PostPageScreen from './../PostPageScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -112,8 +113,17 @@ const BottomTabNavigator = (props) => {
         component={GroupPostScreen}
         options={{
           tabBarLabel: i18n.t('icon_search'),
-          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
+          tabBarButton: () => <View style={{width: 0, height: 0}} />,
           tabBarVisible: true,
+        }}
+      />
+      <Tab.Screen
+        name="offer"
+        component={PostPageScreen}
+        options={{
+          tabBarLabel: i18n.t('icon_search'),
+          tabBarButton: () => <View style={{width: 0, height: 0}} />,
+          tabBarVisible: false,
         }}
       />
       <Tab.Screen

@@ -30,9 +30,12 @@ import ScaledImage from '../Components/ScaledImage';
 import {CollapsibleHeaderTabView} from 'react-native-tab-view-collapsible-header';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import FastImage from 'react-native-fast-image';
+import UserAction from '../redux/actions/user';
+import {connect} from 'react-redux';
+import * as RootNavigation from '../rootNavigation';
 const defaultUser = variables.defaultUser;
 
-const NotificationScreen = () => {
+const NotificationScreen = (props) => {
   const [notifications, setNotofications] = useState([]);
   const [userId, setUserId] = useState(null);
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -71,7 +74,7 @@ const NotificationScreen = () => {
               comment.enumNotifState === 'SEEN' ? '#fff' : '#e3e3e3',
           },
         ]}>
-        <TouchableOpacity onPress={() => console.log('o')}>
+        <TouchableOpacity onPress={() => goToGroupPost(item.groupId)}>
           <Image
             style={styles.image}
             source={{
@@ -88,7 +91,9 @@ const NotificationScreen = () => {
             <Text style={styles.time}>{convertDate(comment?.createdAt)}</Text>
           </View>
           <ViewMoreText numberOfLines={2}>
-            <Text onPress={() => console.log(0)} rkType="primary3 mediumLine">
+            <Text
+              onPress={() => goToGroupPost(item.groupId)}
+              rkType="primary3 mediumLine">
               {comment.enumNotifType === 'GROUP'
                 ? I18n.t('group_notification')
                 : I18n.t('chat_notification')}
@@ -198,6 +203,10 @@ const NotificationScreen = () => {
           console.log(error);
         });
     }
+  };
+  const goToGroupPost = (id) => {
+    props.sendSearchData({type: 'group', keyword: id, from: 'notifications'});
+    RootNavigation.navigate('search', {});
   };
   return (
     <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
@@ -396,4 +405,21 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotificationScreen;
+const mapStateToProps = (state) => {
+  return {
+    user: state.userState.user,
+    searchData: state.userState.searchData,
+    openOffer: state.userState.openOffer,
+    isLogin: state.userState.isLogin,
+    lang: state.userState.lang,
+    data: state.signin.data,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    sendSearchData: (data) => dispatch(UserAction.updateSearchData(data)),
+    sendOpenOffer: (data) => dispatch(UserAction.updateOpenOffer(data)),
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(NotificationScreen);

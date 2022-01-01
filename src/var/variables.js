@@ -8,10 +8,26 @@ let defaultUser =
 
 let deviceHeight = Dimensions.get('window').height;
 let deviceWidth = Dimensions.get('window').width;
-let hasSoftMenu = ExtraDimensions.isSoftMenuBarEnabled();
-let deviceRealHeight = ExtraDimensions.getRealWindowHeight();
-let deviceSoftMenuHeight =
-  ExtraDimensions.isSoftMenuBarEnabled() === false ? 0 : 75;
+let hasSoftMenu = false;
+let deviceRealHeight = 0;
+let deviceSoftMenuBar = 0;
+let deviceStatusBar = 0;
+let deviceSoftMenuHeight = 0;
+let softMenuBar = 0;
+if (platform === 'android') {
+  hasSoftMenu = ExtraDimensions.isSoftMenuBarEnabled();
+  deviceRealHeight = ExtraDimensions.getRealWindowHeight();
+  deviceSoftMenuBar = ExtraDimensions.getStatusBarHeight();
+  deviceStatusBar = ExtraDimensions.getStatusBarHeight();
+  deviceSoftMenuHeight =
+    ExtraDimensions.isSoftMenuBarEnabled() === false ? 0 : 75;
+  softMenuBar = ExtraDimensions.getSoftMenuBarHeight();
+}
+let workingScreenHeigth = deviceHeight - deviceStatusBar - softMenuBar;
+
+if (hasSoftMenu) {
+  workingScreenHeigth = workingScreenHeigth;
+}
 const platform = Platform.OS;
 const platformStyle = undefined;
 const isIphoneX =
@@ -48,7 +64,7 @@ const itemWidth = slideWidth + itemHorizontalMargin * 2;
 export default {
   platformStyle,
   platform,
-
+  deviceSoftMenuBar,
   deviceWidth,
   deviceHeight,
   itemWidth,
@@ -61,4 +77,7 @@ export default {
   deviceRealHeight,
   deviceSoftMenuHeight,
   defaultUser,
+  deviceStatusBar,
+  workingScreenHeigth,
+  softMenuBar,
 };

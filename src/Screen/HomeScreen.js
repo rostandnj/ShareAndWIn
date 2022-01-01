@@ -56,8 +56,7 @@ const HomeScreen = (props) => {
   const [openOffer, setOpenOffer] = useState(null);
   const [openOfferIndex, setOpenOfferIndex] = useState(null);
   const [hasLoaded, setHasLoaded] = useState(false);
-  const pageSize = 15;
-  const commentLimit = 15;
+  const pageSize = 5;
   const [pageNo, setPageNo] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -138,7 +137,7 @@ const HomeScreen = (props) => {
         offer={item}
         index={index}
         convertDate={convertDate}
-        showModalComment={showModalComment}
+        showModalComment={goToShowOffer}
         makeReaction={makeReaction}
         onShare={onShare}
       />
@@ -325,7 +324,7 @@ const HomeScreen = (props) => {
             });
             setDataComment(dataComment);
             setCommentOffset(commentOffset + 1);
-            if (result.length >= commentLimit) {
+            if (result.length >= pageSize) {
               setCanLoadMoreComment(true);
             } else {
               setCanLoadMoreComment(false);
@@ -502,6 +501,13 @@ const HomeScreen = (props) => {
       RootNavigation.navigate('search', {});
     }
   };
+  const goToShowOffer = (val) => {
+    val.from = 'home';
+    props.sendOpenOffer(val);
+    if (typeof val === 'object') {
+      RootNavigation.navigate('offer', {});
+    }
+  };
   return (
     <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
       <View style={[styles.container]}>
@@ -602,49 +608,6 @@ const HomeScreen = (props) => {
                 />
               </View>
             )}
-            <Provider theme={theme}>
-              <Portal>
-                {openOffer !== null && (
-                  <Modal
-                    style={{
-                      backgroundColor: 'white',
-                      margin: 0, // This is the important style you need to set
-                      alignItems: undefined,
-                      justifyContent: undefined,
-                    }}
-                    statusBarTranslucent={false}
-                    visible={visibleComment}
-                    presentationStyle={'fullScreen'}
-                    onRequestClose={hideModalComment}
-                    onDismiss={hideModalComment}>
-                    <KeyboardAvoidingView
-                      keyboardVerticalOffset={Platform.OS === 'ios' ? -10 : 35}
-                      style={{flex: 1}}
-                      behavior={'position'}
-                      enabled={true}>
-                      <PostPage
-                        sendingComment={sendingComment}
-                        hideModalComment={hideModalComment}
-                        openOffer={openOffer}
-                        mainComments={mainComments}
-                        intToK={intToK}
-                        makeReaction2={makeReaction2}
-                        onShare={onShare}
-                        canLoadMoreComment={canLoadMoreComment}
-                        loadMoreComment={loadMoreComment}
-                        loadingMoreComment={loadingMoreComment}
-                        dataComment={dataComment}
-                        commentItem={commentItem}
-                        setCommentMsg={setCommentMsg}
-                        commentMsg={commentMsg}
-                        user={props.user}
-                        convertDate={convertDate}
-                      />
-                    </KeyboardAvoidingView>
-                  </Modal>
-                )}
-              </Portal>
-            </Provider>
           </View>
         </View>
       </View>
@@ -880,6 +843,7 @@ const mapStateToProps = (state) => {
   return {
     user: state.userState.user,
     searchData: state.userState.searchData,
+    openOffer: state.userState.openOffer,
     isLogin: state.userState.isLogin,
     lang: state.userState.lang,
     data: state.signin.data,
@@ -889,6 +853,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     sendSearchData: (data) => dispatch(UserAction.updateSearchData(data)),
+    sendOpenOffer: (data) => dispatch(UserAction.updateOpenOffer(data)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

@@ -46,6 +46,9 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import ScaledImage from '../Components/ScaledImage';
 import ProgressBar from 'react-native-progress/Bar';
 import axios from 'axios';
+import * as RootNavigation from '../rootNavigation';
+import PostPage from '../Components/PostPage';
+import UserAction from '../redux/actions/user';
 TimeAgo.addLocale(en);
 const timeAgo = new TimeAgo('en-US');
 const defaultUser = variables.defaultUser;
@@ -65,7 +68,7 @@ const GroupPostScreen = (props) => {
   const [openOffer, setOpenOffer] = useState(null);
   const [openOfferIndex, setOpenOfferIndex] = useState(null);
   const [hasLoaded, setHasLoaded] = useState(false);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [commentLimit, setCommentLimit] = useState(15);
   const [pageNo, setPageNo] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
@@ -296,7 +299,7 @@ const GroupPostScreen = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={stylesItem.commentIcon}
-            onPress={() => showModalComment(index)}>
+            onPress={() => goToShowOffer(item)}>
             <FontAwesome5Icon
               lineBreakMode={false}
               name="comment-alt"
@@ -489,8 +492,16 @@ const GroupPostScreen = (props) => {
             '&pageno=0' +
             '&sortby=id';
         } else {
+          url =
+            Config.API_URL_BASE4 +
+            Config.API_GROUP_OFFERS +
+            '?groupId=' +
+            props.searchData.keyword +
+            '&pageSize=' +
+            pageSize +
+            '&pageno=0' +
+            '&sortby=id';
         }
-        console.log(props.searchData);
         const response = await API.get(url, {
           cancelToken: new CancelToken(function executor(c) {
             cancel = c;
@@ -512,6 +523,7 @@ const GroupPostScreen = (props) => {
             }
           }
         }
+        setLoading(false);
       } catch (error) {
         if (started) {
           setLoading(false);
@@ -529,7 +541,13 @@ const GroupPostScreen = (props) => {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        BackHandler.exitApp();
+        RootNavigation.navigate(props.searchData.from, {});
+        setOffers([]);
+        setDataProvider(
+          new DataProvider((r1, r2) => {
+            return r1 !== r2;
+          }).cloneWithRows([], 0),
+        );
         return true;
       };
 
@@ -553,11 +571,21 @@ const GroupPostScreen = (props) => {
         (pageNo + 1).toString() +
         '&sortby=id';
     } else {
+      url =
+        Config.API_URL_BASE4 +
+        Config.API_GROUP_OFFERS +
+        '?groupId=' +
+        props.searchData.keyword +
+        '&pageSize=' +
+        pageSize +
+        '&pageno=' +
+        (pageNo + 1).toString() +
+        '&sortby=id';
     }
     console.log(url);
     console.log(totalPage);
     console.log(pageNo);
-    if (loadingMore === false && pageNo < totalPage) {
+    if (loadingMore === false && pageNo + 1 < totalPage) {
       console.log('more');
       setLoadingMore(true);
       API.get(url)
@@ -985,6 +1013,14 @@ const GroupPostScreen = (props) => {
       setShowSubComment(index);
     }
   };
+  const goToShowOffer = (val) => {
+    val.from = 'groups';
+    props.sendOpenOffer(val);
+    //props.sendSearchData({type: 'search', keyword: props.searchData.keyword});
+    if (typeof val === 'object') {
+      RootNavigation.navigate('offer', {});
+    }
+  };
   return (
     <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
       <View style={[styles.container]}>
@@ -1008,9 +1044,18 @@ const GroupPostScreen = (props) => {
             style={{
               width: variables.deviceWidth,
               flexDirection: 'row',
-              height: 40,
+              height: 50,
               marginTop: Platform.OS === 'ios' ? 30 : 10,
+              paddingRight: 10,
             }}>
+            <ButtonPaper
+              containerStyle={{width: 50, height: 50}}
+              labelStyle={{fontSize: 22, fontWeight: 'bold'}}
+              onPress={() => RootNavigation.navigate(props.searchData.from, {})}
+              icon="arrow-left"
+              color="#fff"
+              mode={'text'}
+            />
             <Text
               style={{
                 flex: 1,
@@ -1024,6 +1069,16 @@ const GroupPostScreen = (props) => {
               }}>
               {I18n.t('offers')}
             </Text>
+            <ActivityIndicator
+              animating={loading || loadingMore}
+              color="#fff"
+              size="small"
+              style={{
+                marginBottom: 10,
+                width: 60,
+                height: 40,
+              }}
+            />
           </View>
           <View
             style={{
@@ -1063,6 +1118,11 @@ const GroupPostScreen = (props) => {
                 /*renderFooter={renderFooter}*/
               />
             )}
+            {!!offers && offers.length === 0 && !loading && !loadingMore && (
+              <View style={{alignItems: 'center', top: '20%'}}>
+                <Text>{I18n.t('nothing_found')}</Text>
+              </View>
+            )}
             {loadingMore && (
               <View
                 style={{
@@ -1079,515 +1139,6 @@ const GroupPostScreen = (props) => {
                 />
               </View>
             )}
-            <Provider theme={theme}>
-              <Portal>
-                {openOffer !== null && (
-                  <Modal
-                    style={{
-                      backgroundColor: 'white',
-                      margin: 0, // This is the important style you need to set
-                      alignItems: undefined,
-                      justifyContent: undefined,
-                    }}
-                    statusBarTranslucent={false}
-                    visible={visibleComment}
-                    presentationStyle={'fullScreen'}
-                    onRequestClose={hideModalComment}
-                    onDismiss={hideModalComment}>
-                    <KeyboardAvoidingView
-                      keyboardVerticalOffset={Platform.OS === 'ios' ? -10 : 35}
-                      style={{flex: 1}}
-                      behavior={'position'}
-                      enabled={true}>
-                      <View
-                        style={{
-                          height: 60,
-                          width: variables.deviceWidth,
-                          backgroundColor: 'transparent',
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          // padding: 4,
-                          paddingTop: 0,
-                          marginTop: Platform.OS === 'ios' ? 30 : 0,
-                        }}>
-                        <View
-                          style={{
-                            width: 60,
-                            flexDirection: 'row',
-                            marginTop: 0,
-                            paddingTop: 10,
-                          }}>
-                          <ButtonPaper
-                            loading={sendingComment}
-                            containerStyle={{width: 50, height: 50}}
-                            labelStyle={{fontSize: 22, fontWeight: 'bold'}}
-                            onPress={() => hideModalComment()}
-                            icon="arrow-left"
-                            color="#000"
-                            mode={'text'}
-                          />
-                        </View>
-                        <View
-                          style={{
-                            width: variables.deviceWidth - 120,
-                            flexDirection: 'row-reverse',
-                            marginTop: 20,
-                          }}>
-                          <Text
-                            style={{
-                              flex: 1,
-                              marginTop: 0,
-                              flexWrap: 'wrap',
-                              fontSize: 18,
-                              fontWeight: 'bold',
-                              textAlign: 'center',
-                            }}>
-                            {openOffer?.company?.name}
-                          </Text>
-                          <ActivityIndicator
-                            animating={false}
-                            color="#007bff"
-                            size="small"
-                            style={styles.activityIndicatorComment}
-                          />
-                        </View>
-                        <View
-                          style={{
-                            width: 60,
-                            flexDirection: 'row',
-                            marginTop: 0,
-                            paddingTop: 0,
-                          }}>
-                          <ButtonPaper
-                            style={{paddingTop: 5}}
-                            onPress={() => hideModalComment()}
-                            mode={'text'}>
-                            <Icon
-                              name="dots-horizontal"
-                              size={32}
-                              color="#000"
-                            />
-                          </ButtonPaper>
-                        </View>
-                      </View>
-                      <View
-                        ref={mainComments}
-                        style={{
-                          height:
-                            Platform.OS === 'ios'
-                              ? variables.deviceHeight - 150
-                              : variables.deviceHeight -
-                                110 -
-                                variables.deviceSoftMenuHeight,
-                        }}>
-                        <FlatList
-                          maxToRenderPerBatch={7}
-                          initialNumToRender={6}
-                          ListHeaderComponent={() => {
-                            return (
-                              <View style={stylesItem.item}>
-                                <View style={stylesItem.contentContainerTitle}>
-                                  <Text
-                                    style={{
-                                      fontWeight: 'bold',
-                                      fontSize: 16,
-                                      marginTop: 1,
-                                      color: '#393939',
-                                    }}>
-                                    {openOffer?.title}
-                                  </Text>
-                                </View>
-                                <View style={stylesItem.contentContainerModal}>
-                                  <Text style={stylesItem.paragraph}>
-                                    {openOffer?.description}
-                                  </Text>
-                                </View>
-                                <View style={stylesItem.imageContainer}>
-                                  <ScaledImage
-                                    height={400}
-                                    source={
-                                      Config.API_URL_BASE3 +
-                                      Config.API_FILE_MEDIUM +
-                                      openOffer.avatar?.uid
-                                    }
-                                    defaultSource={require('../Image/pre.gif')}
-                                  />
-                                </View>
-                                <View style={stylesItem.reactionContainer}>
-                                  <Text
-                                    style={{
-                                      fontWeight: 'bold',
-                                      color: 'gray',
-                                    }}>
-                                    {intToK(parseInt(openOffer?.likesNb))}
-                                  </Text>
-                                  <TouchableOpacity
-                                    onPress={() => makeReaction2('LIKE')}>
-                                    <FontAwesome5Icon
-                                      name="thumbs-up"
-                                      color="#318bfb"
-                                      backgroundColor="#fff"
-                                      style={stylesItem.reactionIcon}
-                                    />
-                                  </TouchableOpacity>
-                                  <TouchableOpacity
-                                    onPress={() => makeReaction2('INLOVE')}>
-                                    <FontAwesome5Icon
-                                      name="heart"
-                                      color="#e8304a"
-                                      backgroundColor="white"
-                                      style={stylesItem.reactionIcon}
-                                    />
-                                  </TouchableOpacity>
-                                  <TouchableOpacity
-                                    onPress={() => makeReaction2('AMAZING')}>
-                                    <FontAwesome5Icon
-                                      name="grin-squint"
-                                      color="#e8304a"
-                                      backgroundColor="white"
-                                      style={stylesItem.reactionIcon}
-                                    />
-                                  </TouchableOpacity>
-                                  <TouchableOpacity
-                                    onPress={() => makeReaction2('SAD')}>
-                                    <FontAwesome5Icon
-                                      name="frown-open"
-                                      color="#e8304a"
-                                      backgroundColor="white"
-                                      style={stylesItem.reactionIcon}
-                                    />
-                                  </TouchableOpacity>
-                                  <TouchableOpacity
-                                    onPress={() => makeReaction2('ANGRY')}>
-                                    <FontAwesome5Icon
-                                      lineBreakMode={false}
-                                      name="angry"
-                                      color="#e8304a"
-                                      backgroundColor="white"
-                                      style={stylesItem.reactionIcon}
-                                    />
-                                  </TouchableOpacity>
-                                  <TouchableOpacity
-                                    style={stylesItem.commentIcon}>
-                                    <FontAwesome5Icon
-                                      lineBreakMode={false}
-                                      name="comment-alt"
-                                      color="gray"
-                                      backgroundColor="white"
-                                      style={{
-                                        ...stylesItem.reactionIcon,
-                                        fontSize: 14,
-                                      }}>
-                                      <Text
-                                        style={{
-                                          fontSize: 12,
-                                          textAlignVertical: 'center',
-                                          fontWeight: 'bold',
-                                        }}>
-                                        {' '}
-                                        {openOffer?.commentsNb}
-                                      </Text>
-                                    </FontAwesome5Icon>
-                                  </TouchableOpacity>
-                                  <TouchableOpacity
-                                    onPress={() => onShare(openOffer)}
-                                    style={stylesItem.shareIcon}>
-                                    <FontAwesome5Icon
-                                      name="share-alt"
-                                      color="gray">
-                                      <Text
-                                        style={{
-                                          fontSize: 12,
-                                          textAlignVertical: 'center',
-                                        }}>
-                                        {' '}
-                                        {openOffer?.shareNb}
-                                      </Text>
-                                    </FontAwesome5Icon>
-                                  </TouchableOpacity>
-                                </View>
-                              </View>
-                            );
-                          }}
-                          ListFooterComponentStyle={{
-                            backgroundColor: '#fff',
-                            marginTop: 10,
-                          }}
-                          ListFooterComponent={() => {
-                            return (
-                              <View
-                                style={{
-                                  flexDirection: 'column',
-                                  alignItems: 'center',
-                                }}>
-                                {canLoadMoreComment === true && (
-                                  <TouchableOpacity
-                                    onPress={() => {
-                                      loadMoreComment();
-                                    }}
-                                    style={{
-                                      alignItems: 'center',
-                                      backgroundColor: '#ddd',
-                                      padding: 5,
-                                      width: 'auto',
-                                      borderRadius: 5,
-                                    }}>
-                                    <Text style={{fontSize: 12}}>
-                                      {I18n.t('loading_more')}
-                                      {loadingMoreComment && (
-                                        <ActivityIndicator
-                                          animating={true}
-                                          color="#007bff"
-                                          size="small"
-                                          style={
-                                            styles.activityIndicatorLoadingComment
-                                          }
-                                        />
-                                      )}
-                                    </Text>
-                                  </TouchableOpacity>
-                                )}
-                              </View>
-                            );
-                          }}
-                          style={styles.root}
-                          data={dataComment}
-                          ItemSeparatorComponent={() => {
-                            return <View style={styles.separator} />;
-                          }}
-                          keyExtractor={(item) => {
-                            return item.id;
-                          }}
-                          renderItem={(item, ind) => {
-                            const comment = item.item;
-                            return (
-                              <View style={styles.containerComment}>
-                                <TouchableOpacity
-                                  // disabled={comment.comments.length === 0}
-                                  onPress={() => displaySubComment(comment.id)}>
-                                  <FastImage
-                                    style={styles.image}
-                                    source={{
-                                      uri:
-                                        comment.user !== null &&
-                                        comment.user.photo !== null
-                                          ? Config.API_URL_BASE3 +
-                                            Config.API_FILE_MINI +
-                                            comment.user.photo.uid
-                                          : defaultUser,
-                                      priority: FastImage.priority.low,
-                                      cache: FastImage.cacheControl.immutable,
-                                    }}
-                                  />
-                                </TouchableOpacity>
-                                <View style={styles.content}>
-                                  <View style={styles.contentHeader}>
-                                    <Text style={styles.name}>
-                                      {comment?.user?.firstName +
-                                        ' ' +
-                                        comment?.user?.lastName}
-                                    </Text>
-                                    <Text style={styles.time}>
-                                      {convertDate(comment.createdAt)}
-                                    </Text>
-                                  </View>
-                                  <ViewMoreText
-                                    numberOfLines={2}
-                                    renderViewMore={renderViewMore}
-                                    renderViewLess={renderViewLess}>
-                                    <Text
-                                      onPress={() =>
-                                        displaySubComment(comment.id)
-                                      }
-                                      rkType="primary3 mediumLine">
-                                      {comment.message}
-                                    </Text>
-                                  </ViewMoreText>
-                                  <View style={styles.contentFooter}>
-                                    <View
-                                      style={{
-                                        flex: 1,
-                                        flexDirection: 'row-reverse',
-                                        marginTop: 0,
-                                      }}>
-                                      <Text style={{marginRight: 15}}>
-                                        {comment.comments.length}
-                                      </Text>
-                                      <TouchableOpacity
-                                        disabled={comment.comments.length === 0}
-                                        onPress={() =>
-                                          displaySubComment(comment.id)
-                                        }>
-                                        <ButtonPaper
-                                          style={{height: 10, marginRight: -30}}
-                                          mode={'text'}
-                                          icon={'comment'}
-                                        />
-                                      </TouchableOpacity>
-                                      <Text
-                                        style={{
-                                          marginRight: 15,
-                                          display: 'none',
-                                        }}>
-                                        {comment.likesNb !== null
-                                          ? comment.likesNb
-                                          : 0}
-                                      </Text>
-
-                                      <ButtonPaper
-                                        style={{
-                                          height: 10,
-                                          marginRight: -30,
-                                          display: 'none',
-                                        }}
-                                        mode={'text'}
-                                        icon={'thumb-up'}
-                                        onPress={() => alert('rr')}
-                                      />
-                                    </View>
-                                  </View>
-                                  {comment.comments.length > 0 &&
-                                    showSubComment === comment.id && (
-                                      <View
-                                        style={{
-                                          flex: 1,
-                                        }}>
-                                        <FlatList
-                                          data={comment.comments}
-                                          keyExtractor={(item2, index2) => {
-                                            return index2.toString();
-                                          }}
-                                          renderItem={(it) => {
-                                            const comment2 = it.item;
-                                            return (
-                                              <View
-                                                style={
-                                                  styles.containerComment2
-                                                }>
-                                                <TouchableOpacity
-                                                  onPress={() => {
-                                                    console.log(0);
-                                                  }}>
-                                                  <FastImage
-                                                    style={styles.image2}
-                                                    source={{
-                                                      uri:
-                                                        comment2.user !== null
-                                                          ? Config.API_URL_BASE3 +
-                                                            Config.API_FILE_MINI +
-                                                            comment2.user.photo
-                                                              .uid
-                                                          : defaultUser,
-                                                      priority:
-                                                        FastImage.priority.low,
-                                                      cache:
-                                                        FastImage.cacheControl
-                                                          .immutable,
-                                                    }}
-                                                  />
-                                                </TouchableOpacity>
-                                                <View style={styles.content}>
-                                                  <View
-                                                    style={
-                                                      styles.contentHeader
-                                                    }>
-                                                    <Text style={styles.name}>
-                                                      {comment2?.user
-                                                        ?.firstName +
-                                                        ' ' +
-                                                        comment2?.user
-                                                          ?.lastName}
-                                                    </Text>
-                                                    <Text style={styles.time}>
-                                                      {convertDate(
-                                                        comment2.createdAt,
-                                                      )}
-                                                    </Text>
-                                                  </View>
-                                                  <ViewMoreText
-                                                    numberOfLines={2}
-                                                    renderViewMore={
-                                                      renderViewMore
-                                                    }
-                                                    renderViewLess={
-                                                      renderViewLess
-                                                    }>
-                                                    <Text rkType="primary3 mediumLine">
-                                                      {comment2.message}
-                                                    </Text>
-                                                  </ViewMoreText>
-                                                  <View
-                                                    style={
-                                                      styles.contentFooter
-                                                    }>
-                                                    <View
-                                                      style={{
-                                                        flex: 1,
-                                                        flexDirection:
-                                                          'row-reverse',
-                                                        marginTop: 0,
-                                                      }}
-                                                    />
-                                                  </View>
-                                                </View>
-                                              </View>
-                                            );
-                                          }}
-                                        />
-                                      </View>
-                                    )}
-                                </View>
-                              </View>
-                            );
-                          }}
-                        />
-                      </View>
-                      <View style={stylesItem.commentContainer}>
-                        <FastImage
-                          source={{
-                            uri:
-                              Config.API_URL_BASE3 +
-                              Config.API_FILE_MINI +
-                              props.user?.photo?.uid,
-                            priority: FastImage.priority.low,
-                            cache: FastImage.cacheControl.immutable,
-                          }}
-                          defaultSource={require('../Image/pre.gif')}
-                          style={stylesItem.commentAvatar}
-                        />
-                        <View style={stylesItem.commentInput}>
-                          <TextInput
-                            style={[stylesItem.commentInputWrapper]}
-                            placeholder={
-                              showSubComment === -1
-                                ? I18n.t('comment_post')
-                                : I18n.t('respond_to_comment')
-                            }
-                            placeholderTextColor="#000"
-                            keyboardType="default"
-                            onSubmitEditing={Keyboard.dismiss}
-                            blurOnSubmit={false}
-                            underlineColorAndroid="#f000"
-                            returnKeyType="next"
-                            label="Message"
-                            value={commentMsg}
-                            onChangeText={(text) => setCommentMsg(text)}
-                          />
-                        </View>
-                        <ButtonPaper
-                          loading={sendingComment}
-                          color={'#007bff'}
-                          compact={true}
-                          mode={'text'}
-                          icon={'send'}
-                          onPress={() => commentItem()}
-                        />
-                      </View>
-                    </KeyboardAvoidingView>
-                  </Modal>
-                )}
-              </Portal>
-            </Provider>
           </View>
         </View>
       </View>
@@ -1793,7 +1344,7 @@ const stylesItem = StyleSheet.create({
   },
   commentContainer: {
     flexDirection: 'row',
-    padding: 10,
+    padding: 1,
     borderColor: 'red',
     borderStyle: 'dashed',
     flexWrap: 'nowrap',
@@ -1823,6 +1374,7 @@ const mapStateToProps = (state) => {
   return {
     user: state.userState.user,
     searchData: state.userState.searchData,
+    openOffer: state.userState.openOffer,
     isLogin: state.userState.isLogin,
     lang: state.userState.lang,
     data: state.signin.data,
@@ -1830,6 +1382,9 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    sendOpenOffer: (data) => dispatch(UserAction.updateOpenOffer(data)),
+    sendSearchData: (data) => dispatch(UserAction.updateSearchData(data)),
+  };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(GroupPostScreen);

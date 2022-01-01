@@ -156,7 +156,7 @@ const PostItem = (props) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={stylesItem.commentIcon}
-          onPress={() => props.showModalComment(props.index)}>
+          onPress={() => props.showModalComment(props.offer)}>
           <FontAwesome5Icon
             lineBreakMode={false}
             name="comment-alt"

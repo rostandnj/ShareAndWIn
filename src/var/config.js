@@ -22,7 +22,7 @@ export const GCM_FCM_ID = '';
 export const APP_NAME_SLUT = '';
 export const API_REGISTRARTION = 'api/account/registration';
 export const API_LOGIN = 'auth/login';
-export const API_LOGIN_GOOGLE = 'auth/mobileAuth/';
+export const API_LOGIN_GOOGLE = 'mobileAuthUser/';
 export const API_REGISTER = 'account/register';
 export const API_RESET_PASSWORD = 'account/newPasswdMail';
 export const API_USER_PROFILE = 'auth/me';
@@ -32,8 +32,8 @@ export const API_FILE_MEDIUM = 'account/readMedium/';
 export const API_Loyality = 'company/offer/loyaltypoint/';
 export const API_UPDATE_PROFILE = 'account/update/';
 export const API_UPDATE_PROFILE_PICTURE = 'account/updateProfilPic';
-export const API_COMPANY_OFFERS = 'company/offer/page';
-export const API_COMPANY_OFFERS2 = 'company/offer/pageV2';
+export const API_COMPANY_OFFERS2 = 'company/offer/page';
+export const API_COMPANY_OFFERS = 'company/offer/pageV2';
 export const API_SEARCH_OFFER = 'company/filterOffer';
 export const API_COMPANY_MAKE_REACTION = 'company/view/create';
 export const API_COMPANY_GET_COMMENT_OLD = 'company/comments';
@@ -43,6 +43,7 @@ export const API_USER_GROUPS = 'group/usersGroupPage?iduser=';
 export const API_ALL_GROUPS = 'group/page/';
 export const API_GROUP_SUBSCRIBE = 'group/member/create?idUser=';
 export const API_GROUP_MEMBERS = 'group/membersInGroupPage?groupId=';
+export const API_GROUP_OFFERS = 'group/offerByGroupPage';
 export const API_USER_NOTIFICATION =
   'chat/notificationListPage?enumNotifType=GROUP&userId=';
 export const API_NOTIFICATION_UNREAD_NUMBER =
@@ -78,5 +79,6 @@ const Config = {
   API_USER_NOTIFICATION,
   API_NOTIFICATION_UNREAD_NUMBER,
   API_SEARCH_OFFER,
+  API_GROUP_OFFERS,
 };
 export default Config;
