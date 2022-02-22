@@ -37,6 +37,14 @@ export const updateOpenOffer = (data) => {
   };
 };
 
+export const updateOpenGroup = (data) => {
+  return {
+    type: ActionTypes.USER_UPDATE_OPEN_GROUP,
+    isLogin: true,
+    openGroup: data,
+  };
+};
+
 export const isLogout = () => {
   return {
     type: ActionTypes.USER_LOGOUT,
@@ -90,5 +98,6 @@ const UserAction = {
   isUpdate,
   updateSearchData,
   updateOpenOffer,
+  updateOpenGroup,
 };
 export default UserAction;

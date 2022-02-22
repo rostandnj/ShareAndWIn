@@ -18,5 +18,6 @@ export const USER_IS_LOGIN = 'user-is-login';
 export const USER_UPDATE = 'user-update';
 export const USER_UPDATE_SEARCH = 'user-update-search';
 export const USER_UPDATE_OPEN_OFFER = 'user-update-open-offer';
+export const USER_UPDATE_OPEN_GROUP = 'user-update-open-group';
 
 export const USER_LOGOUT = 'user-logout';

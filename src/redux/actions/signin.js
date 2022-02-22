@@ -4,6 +4,7 @@ import {Alert} from 'react-native';
 import I18n from '../../i18n/i18n';
 import Config from '../../var/config';
 import AsyncStorage from '@react-native-community/async-storage';
+import * as RootNavigation from '../../rootNavigation';
 
 export const isSignIn = (bool, data) => {
   return {

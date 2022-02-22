@@ -17,6 +17,7 @@ import API from '../../api/fetch';
 import Config from '../../var/config';
 import GroupPostScreen from './../GroupPostScreen';
 import PostPageScreen from './../PostPageScreen';
+import GroupMemberScreen from './../GroupMemberScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -120,6 +121,39 @@ const BottomTabNavigator = (props) => {
       <Tab.Screen
         name="offer"
         component={PostPageScreen}
+        listeners={{
+          focus: (e) => {
+            // Prevent default action
+            //setNotif(notif + 2);
+            /*if (props.user !== null) {
+              RootNavigation.navigate('profile');
+            } else {
+              props.checkUser();
+              RootNavigation.navigate('profile');
+            }*/
+          },
+        }}
+        options={{
+          tabBarLabel: i18n.t('icon_search'),
+          tabBarButton: () => <View style={{width: 0, height: 0}} />,
+          tabBarVisible: false,
+        }}
+      />
+      <Tab.Screen
+        name="group_member"
+        component={GroupMemberScreen}
+        listeners={{
+          focus: (e) => {
+            // Prevent default action
+            //setNotif(notif + 2);
+            /*if (props.user !== null) {
+                      RootNavigation.navigate('profile');
+                    } else {
+                      props.checkUser();
+                      RootNavigation.navigate('profile');
+                    }*/
+          },
+        }}
         options={{
           tabBarLabel: i18n.t('icon_search'),
           tabBarButton: () => <View style={{width: 0, height: 0}} />,

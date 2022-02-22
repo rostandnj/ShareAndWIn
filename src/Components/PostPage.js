@@ -299,7 +299,7 @@ const PostPage = (props) => {
                       style={{
                         alignItems: 'center',
                         backgroundColor: '#ddd',
-                        padding: 5,
+                        padding: 10,
                         width: 'auto',
                         borderRadius: 5,
                       }}>

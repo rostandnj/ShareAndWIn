@@ -124,8 +124,8 @@ const GroupScreen = (props) => {
   const [displayedSuggestedGroup, setDisplayedSuggestedGroup] = useState(null);
   const [displayedMemberGroup, setDisplayedMemberGroup] = useState(null);
   const layoutProviderUser = new LayoutProvider(
-    (index) => {
-      if (index === 0) {
+    (ind) => {
+      if (ind === 0) {
         return 1;
       } else {
         return ViewTypes.FULL;
@@ -530,7 +530,7 @@ const GroupScreen = (props) => {
               color={'#007bff'}
               icon="message-text"
               mode="text"
-              onPress={() => goToGroupPost(item.id)}>
+              onPress={() => goToGroupPost(item.id, item.name)}>
               {item.numberOfOffers === null ? 0 : item.numberOfOffers}
             </ButtonPaper>
             <Text>{''}</Text>
@@ -542,7 +542,7 @@ const GroupScreen = (props) => {
               color={'#007bff'}
               icon="account-group"
               mode="text"
-              onPress={() => displayMemberGroup(item)}>
+              onPress={() => goToShowGroupMember(item)}>
               {item.numberOfMembers === null ? 0 : item.numberOfMembers}
             </ButtonPaper>
           </View>
@@ -621,10 +621,10 @@ const GroupScreen = (props) => {
             height: 60,
             width: variables.deviceWidth,
             alignItems: 'center',
-            paddingTop: 10,
+            paddingTop: 25,
           }}>
           <ButtonPaper
-            contentStyle={{height: 35}}
+            contentStyle={{height: 35, width: variables.deviceWidth}}
             labelStyle={{fontSize: 11}}
             uppercase={false}
             compact={true}
@@ -776,8 +776,9 @@ const GroupScreen = (props) => {
   const renderTabBar = (props) => (
     <TabBar
       {...props}
-      indicatorStyle={{backgroundColor: '#b3b3b3'}}
-      style={{backgroundColor: '#b3b3b3'}}
+      indicatorStyle={{backgroundColor: '#9AC4F8'}}
+      style={{backgroundColor: '#9AC4F8', marginTop: -1}}
+      labelStyle={{fontSize: 14, fontWeight: 'bold'}}
     />
   );
   const displaySuggestedGroup = (group) => {
@@ -935,9 +936,19 @@ const GroupScreen = (props) => {
         });
     }
   };
-  const goToGroupPost = (id) => {
-    props.sendSearchData({type: 'group', keyword: id, from: 'groups'});
+  const goToGroupPost = (id, name) => {
+    props.sendSearchData({
+      type: 'group',
+      keyword: {id: id, name: name},
+      from: 'groups',
+    });
     RootNavigation.navigate('search', {});
+  };
+  const goToShowGroupMember = (val) => {
+    props.sendOpenGroup(val);
+    if (typeof val === 'object') {
+      RootNavigation.navigate('group_member', {});
+    }
   };
   return (
     <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
@@ -990,7 +1001,7 @@ const GroupScreen = (props) => {
         <SafeAreaView style={{flex: 1, paddingTop: 0}}>
           {displayedSuggestedGroup !== null && (
             <Modal
-              presentationStyle={'fullScreen'}
+              presentationStyle={'overFullScreen'}
               animationType="fade"
               transparent={false}
               visible={modalSuggestedVisible}
@@ -1071,32 +1082,14 @@ const GroupScreen = (props) => {
                       <ButtonPaper
                         contentStyle={{
                           width: variables.deviceWidth * 0.5,
-                          backgroundColor: '#ffffff',
+                          backgroundColor: '#007bff',
                         }}
                         uppercase={false}
                         compact={true}
-                        color={'#007bff'}
+                        color={'#fff'}
                         mode="outlined"
                         onPress={() => subscribe()}>
                         {I18n.t('subscribe')}
-                      </ButtonPaper>
-                    </View>
-                    <View
-                      style={[
-                        stylesItem.reactionContainer,
-                        {flexDirection: 'row-reverse'},
-                      ]}>
-                      <ButtonPaper
-                        contentStyle={{
-                          width: variables.deviceWidth * 0.5,
-                          backgroundColor: '#b8b8b8',
-                        }}
-                        uppercase={false}
-                        compact={true}
-                        color={'#FFF'}
-                        mode="outlined"
-                        onPress={() => hideSuggestedGroup()}>
-                        {I18n.t('close')}
                       </ButtonPaper>
                     </View>
                   </View>
@@ -1106,6 +1099,8 @@ const GroupScreen = (props) => {
           )}
           {displayedMemberGroup !== null && (
             <Modal
+              backdropColor={'white'}
+              backdropOpacity={1}
               presentationStyle={'fullScreen'}
               animationType="fade"
               transparent={false}
@@ -1120,7 +1115,7 @@ const GroupScreen = (props) => {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     // padding: 4,
-                    paddingTop: 0,
+                    // paddingTop: 0,
                     marginTop: Platform.OS === 'ios' ? 30 : 0,
                   }}>
                   <View
@@ -1300,7 +1295,7 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     padding: 2,
     alignItems: 'center',
-    elevation: 5,
+    elevation: 1,
     width: variables.deviceWidth,
   },
   button: {
@@ -1469,6 +1464,7 @@ const mapStateToProps = (state) => {
   return {
     user: state.userState.user,
     searchData: state.userState.searchData,
+    openGroup: state.userState.openGroup,
     isLogin: state.userState.isLogin,
     lang: state.userState.lang,
     data: state.signin.data,
@@ -1478,6 +1474,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     sendSearchData: (data) => dispatch(UserAction.updateSearchData(data)),
+    sendOpenGroup: (data) => dispatch(UserAction.updateOpenGroup(data)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(GroupScreen);

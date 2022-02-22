@@ -1,9 +1,8 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import HomeScreen from './HomeScreen';
-import ProfileScreen from './ProfileScreen';
-import UserAndGroupScreen from './UserAndGroupScreen';
-import NotificationScreen from './NotificationScreen';
+import HomeScreen from './../HomeScreen';
+import ProfileScreen from './../ProfileScreen';
+import NotificationScreen from './../NotificationScreen';
 import SearchScreen from '../SearchScreen';
 
 const Stack = createStackNavigator();

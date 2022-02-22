@@ -40,6 +40,11 @@ const userReducer = (state = initialState, action) => {
         openOffer: action.openOffer,
       });
       return ob;
+    case types.USER_UPDATE_OPEN_GROUP:
+      const obj = Object.assign({}, state, {
+        openGroup: action.openGroup,
+      });
+      return obj;
 
     default:
       return state;

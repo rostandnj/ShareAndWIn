@@ -129,7 +129,7 @@ const PostPageScreen = (props) => {
       API.get(url)
         .then((res) => {
           setSendingComment(false);
-          console.log(res.data.data.offer);
+          // console.log(res.data.data);
           setOpenOffer(res.data.data.offer);
           props.sendOpenOffer(res.data.data.offer);
         })
@@ -167,6 +167,7 @@ const PostPageScreen = (props) => {
         setDataComment([]);
         setLoading(false);
         setLoadingMore(false);
+        setPageNo(0);
         setDataProviderComment(
           new DataProvider((r1, r2) => {
             return r1 !== r2;
@@ -201,7 +202,7 @@ const PostPageScreen = (props) => {
     let cancel;
     let started = true;
     const fetchData = async () => {
-      console.log('loading offer comment');
+      // console.log('loading offer comment');
       try {
         setLoading(true);
         setCommentOffset(0);
@@ -227,6 +228,12 @@ const PostPageScreen = (props) => {
             setDataComment(result);
             setTotalPage(response.data.data.totalPage);
             if (offerLength.current > 0) {
+              if (offerLength.current >= pageSize) {
+                setCanLoadMoreComment(true);
+                // console.log('good');
+              } else {
+                setCanLoadMoreComment(false);
+              }
               setDataProviderComment(
                 new DataProvider((r1, r2) => {
                   return r1 !== r2;
@@ -261,16 +268,22 @@ const PostPageScreen = (props) => {
       (pageNo + 1).toString() +
       '&sortby=id';
 
-    console.log(url);
-    console.log(totalPage);
-    console.log(pageNo);
-    if (loadingMore === false && pageNo + 1 < totalPage) {
-      console.log('more');
+    // console.log(url);
+    // console.log(totalPage);
+    // console.log(pageNo);
+    if (loadingMore === false && pageNo + 1 <= totalPage) {
+      // console.log('more');
       setLoadingMore(true);
       API.get(url)
         .then((res) => {
           setLoadingMore(false);
           const result = res.data.data.content;
+          // console.log(result.length);
+          if (result.length >= pageSize) {
+            setCanLoadMoreComment(true);
+          } else {
+            setCanLoadMoreComment(false);
+          }
           result.forEach((e) => {
             dataComment.push(e);
           });
@@ -543,7 +556,8 @@ const PostPageScreen = (props) => {
               }}
               ListFooterComponentStyle={{
                 backgroundColor: '#fff',
-                marginTop: 10,
+                marginTop: 1,
+                height: 50,
               }}
               ListFooterComponent={() => {
                 return (
@@ -553,27 +567,16 @@ const PostPageScreen = (props) => {
                       alignItems: 'center',
                     }}>
                     {canLoadMoreComment === true && (
-                      <TouchableOpacity
-                        onPress={() => loadMore()}
-                        style={{
-                          alignItems: 'center',
-                          backgroundColor: '#ddd',
-                          padding: 5,
-                          width: 'auto',
-                          borderRadius: 5,
-                        }}>
-                        <Text style={{fontSize: 12}}>
-                          {I18n.t('loading_more')}
-                          {loadingMore && (
-                            <ActivityIndicator
-                              animating={true}
-                              color="#007bff"
-                              size="small"
-                              style={styles.activityIndicatorLoadingComment}
-                            />
-                          )}
-                        </Text>
-                      </TouchableOpacity>
+                      <ButtonPaper
+                        contentStyle={{height: 35}}
+                        labelStyle={{fontSize: 11}}
+                        uppercase={false}
+                        compact={true}
+                        color={'#007bff'}
+                        mode="outlined"
+                        onPress={() => loadMore()}>
+                        {I18n.t('loading_more')}
+                      </ButtonPaper>
                     )}
                   </View>
                 );

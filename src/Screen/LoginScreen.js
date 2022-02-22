@@ -28,6 +28,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import {LoginButton, AccessToken} from 'react-native-fbsdk-next';
+import variables from '../var/variables';
 
 const LoginScreen = (props) => {
   const [userEmail, setUserEmail] = useState('');
@@ -137,23 +138,40 @@ const LoginScreen = (props) => {
               {props.errorMsg !== '' ? (
                 <Text style={styles.errorTextStyle}> {props.errorMsg} </Text>
               ) : null}
-              <TouchableOpacity
-                style={styles.buttonStyle}
-                activeOpacity={0.5}
-                onPress={handleSubmitPress}>
-                <Text style={styles.buttonTextStyle}>{I18n.t('login')}</Text>
-              </TouchableOpacity>
-              <View style={[styles.textBtn, {}]}>
-                <Icon.Button
-                  style={{width: '100%', flexDirection: 'row'}}
-                  name="google"
-                  borderRadius={30}
-                  backgroundColor="#DD4B39"
-                  onPress={() => loginGoogle()}>
-                  {I18n.t('login_google')}
-                </Icon.Button>
+              <View
+                style={{
+                  width: variables.deviceWidth,
+                  flexDirection: 'row',
+                  marginTop: 20,
+                  paddingLeft: variables.deviceWidth * 0.03,
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.buttonStyle,
+                    {width: variables.deviceWidth * 0.4, height: 38},
+                  ]}
+                  activeOpacity={0.5}
+                  onPress={handleSubmitPress}>
+                  <Text style={styles.buttonTextStyle}>{I18n.t('login')}</Text>
+                </TouchableOpacity>
+                <View
+                  style={[
+                    styles.textBtn,
+                    {
+                      marginTop: 23,
+                    },
+                  ]}>
+                  <Icon.Button
+                    style={{width: '100%', flexDirection: 'row'}}
+                    name="google"
+                    borderRadius={30}
+                    backgroundColor="#DD4B39"
+                    onPress={() => loginGoogle()}>
+                    {I18n.t('login_google')}
+                  </Icon.Button>
+                </View>
               </View>
-              <View style={styles.textBtn}>
+              <View style={[styles.textBtn, {}]}>
                 <Text
                   style={styles.registerTextStyle}
                   onPress={() => RootNavigation.navigate('RegisterScreen')}>
@@ -251,6 +269,7 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     fontSize: 14,
+    fontWeight: 'bold'
   },
   container: {
     flex: 1,

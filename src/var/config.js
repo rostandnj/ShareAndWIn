@@ -39,10 +39,13 @@ export const API_COMPANY_MAKE_REACTION = 'company/view/create';
 export const API_COMPANY_GET_COMMENT_OLD = 'company/comments';
 export const API_COMPANY_GET_COMMENT = 'company/offerCommentInOfferPage';
 export const API_COMPANY_MAKE_COMMENT = 'company/offer/comment';
-export const API_USER_GROUPS = 'group/usersGroupPage?iduser=';
+export const API_USER_GROUPS_OLD = 'group/usersGroupPage?iduser=';
+export const API_USER_GROUPS = 'group/usersGroupDtoPage?iduser=';
+export const API_ALL_GROUPS_OLD = 'group/pageDto/';
 export const API_ALL_GROUPS = 'group/page/';
 export const API_GROUP_SUBSCRIBE = 'group/member/create?idUser=';
 export const API_GROUP_MEMBERS = 'group/membersInGroupPage?groupId=';
+export const API_GROUP_OFFERS_OLD = 'group/offerByGroupPage';
 export const API_GROUP_OFFERS = 'group/offerByGroupPage';
 export const API_USER_NOTIFICATION =
   'chat/notificationListPage?enumNotifType=GROUP&userId=';

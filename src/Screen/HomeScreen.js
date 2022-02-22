@@ -36,6 +36,8 @@ import PostItem from '../Components/PostItem';
 import CommentItem from '../Components/CommentItem';
 import PostPage from '../Components/PostPage';
 import UserAction from '../redux/actions/user';
+import API_FILE from '../api/fetchFile';
+import AsyncStorage from '@react-native-community/async-storage';
 TimeAgo.addLocale(en);
 
 // Create formatter (English).
@@ -163,6 +165,46 @@ const HomeScreen = (props) => {
     }, []),
   );
   useEffect(() => {
+    AsyncStorage.getItem('user').then((userToken) => {
+      if (userToken !== null) {
+        let url = Config.API_URL_BASE1 + Config.API_USER_PROFILE;
+        API.defaults.headers.Authorization =
+          'Bearer ' + JSON.parse(userToken).accessToken;
+        API_FILE.defaults.headers.Authorization =
+          'Bearer ' + JSON.parse(userToken).accessToken;
+        API.get(url)
+          .then((res) => {
+            API.get(
+              Config.API_URL_BASE4 + Config.API_Loyality + res.data.data.id,
+            )
+              .then((res2) => {
+                console.log('welcome');
+                res.data.data.loyalTy = res2.data.data;
+                //setUser(res.data.data);
+                props.isLogin(res.data.data, 'en');
+              })
+              .then((res2) => {})
+              .catch((error) => {
+                console.log('bad');
+                //console.log(error.response.data);
+                console.log(error.response.data);
+              });
+          })
+          .catch((error) => {
+            console.log('bad 2');
+            //console.log(error.response.data);
+            /*Alert.alert(
+                'Message',
+                error.response.data.error,
+                [{text: 'OK', onPress: () => {}}],
+                {cancelable: true},
+              );*/
+            props.navigation.navigate('Auth');
+          });
+      } else {
+        props.navigation.navigate('Auth');
+      }
+    });
     let isMounted = true;
     if (!hasLoaded) {
       setLoading(true);
@@ -852,6 +894,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    isLogin: (user, lang) => dispatch(UserAction.isLogin(user, lang)),
     sendSearchData: (data) => dispatch(UserAction.updateSearchData(data)),
     sendOpenOffer: (data) => dispatch(UserAction.updateOpenOffer(data)),
   };

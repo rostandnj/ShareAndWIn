@@ -476,7 +476,6 @@ const GroupPostScreen = (props) => {
     let cancel;
     let started = true;
     const fetchData = async () => {
-      console.log('fetch first');
       try {
         setLoading(true);
         setPageNo(0);
@@ -496,7 +495,7 @@ const GroupPostScreen = (props) => {
             Config.API_URL_BASE4 +
             Config.API_GROUP_OFFERS +
             '?groupId=' +
-            props.searchData.keyword +
+            props.searchData.keyword.id +
             '&pageSize=' +
             pageSize +
             '&pageno=0' +
@@ -1056,19 +1055,41 @@ const GroupPostScreen = (props) => {
               color="#fff"
               mode={'text'}
             />
-            <Text
-              style={{
-                flex: 1,
-                marginTop: 0,
-                marginLeft: 10,
-                flexWrap: 'wrap',
-                fontSize: 22,
-                color: '#fff',
-                fontWeight: 'bold',
-                textAlign: 'left',
-              }}>
-              {I18n.t('offers')}
-            </Text>
+            {props.searchData.type === 'search' && (
+              <Text
+                style={{
+                  flex: 1,
+                  marginTop: 0,
+                  marginLeft: 10,
+                  flexWrap: 'wrap',
+                  fontSize: 22,
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  textAlign: 'left',
+                }}>
+                {I18n.t('offers')}
+              </Text>
+            )}
+            {props.searchData.type !== 'search' && (
+              <Text
+                style={{
+                  flex: 1,
+                  marginTop: 0,
+                  marginLeft: 10,
+                  flexWrap: 'wrap',
+                  fontSize: 22,
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  textAlign: 'left',
+                }}>
+                <Icon
+                  name="account-group"
+                  color="#fff"
+                  style={{fontSize: 20}}
+                />{' '}
+                {'    ' + props.searchData.keyword.name}
+              </Text>
+            )}
             <ActivityIndicator
               animating={loading || loadingMore}
               color="#fff"
