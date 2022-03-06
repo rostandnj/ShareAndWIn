@@ -77,7 +77,14 @@ const ProfileScreen = (props) => {
   const [userAddress, setUserAddress] = useState('');
   const [userDescription, setUserDescription] = useState('');
   const [user, setUser] = useState(null);
-  const [isStatisticVisible, setIsStatisticVisible] = useState(false);
+  const [
+    isStatisticMarketingVisible,
+    setIsStatisticMarketingVisible,
+  ] = useState(false);
+
+  const [isStatisticLoyaltyVisible, setIsStatisticLoyaltyVisible] = useState(
+    false,
+  );
 
   const theme = {
     ...DefaultTheme,
@@ -226,8 +233,11 @@ const ProfileScreen = (props) => {
     });
   };
 
-  const hideModalStat = () => {
-    setIsStatisticVisible(false);
+  const hideModalStatMarketing = () => {
+    setIsStatisticMarketingVisible(false);
+  };
+  const hideModalStatLoyalty = () => {
+    setIsStatisticLoyaltyVisible(false);
   };
 
   return (
@@ -303,10 +313,20 @@ const ProfileScreen = (props) => {
           <View style={[styles.row, {marginLeft: -15}]}>
             <Button
               color={'#007bff'}
-              onPress={() => setIsStatisticVisible(true)}>
-              <Icon name="chart-line" color="#777777" size={20} />
+              onPress={() => setIsStatisticMarketingVisible(true)}>
+              <Icon name="chart-line" color="#777777" size={18} />
               <Text style={{color: '#777777', marginLeft: 40}}>
-                {I18n.t('statistic')}
+                {I18n.t('statistic_marketing')}
+              </Text>
+            </Button>
+          </View>
+          <View style={[styles.row, {marginLeft: -15}]}>
+            <Button
+              color={'#007bff'}
+              onPress={() => setIsStatisticLoyaltyVisible(true)}>
+              <Icon name="chart-line" color="#777777" size={18} />
+              <Text style={{color: '#777777', marginLeft: 40}}>
+                {I18n.t('loyalty_marketing')}
               </Text>
             </Button>
           </View>
@@ -465,19 +485,20 @@ const ProfileScreen = (props) => {
               </ScrollView>
             </Modal>
             <Modal
-              visible={isStatisticVisible}
-              onDismiss={() => setIsStatisticVisible(false)}
+              visible={isStatisticMarketingVisible}
+              onDismiss={() => setIsStatisticMarketingVisible(false)}
               contentContainerStyle={styles.modal}
               presentationStyle={'fullScreen'}>
               <ScrollView>
                 <Card>
                   <Card.Title
                     rightStyle={{marginRight: 20}}
-                    title={I18n.t('statistic')}
+                    title={I18n.t('statistic_marketing')}
                     subtitle=""
                     right={() => {
                       return (
-                        <TouchableOpacity onPress={() => hideModalStat()}>
+                        <TouchableOpacity
+                          onPress={() => hideModalStatMarketing()}>
                           <Avatar.Icon size={24} icon="close" />
                         </TouchableOpacity>
                       );
@@ -485,7 +506,6 @@ const ProfileScreen = (props) => {
                   />
                   <Card.Content>
                     <View style={{}}>
-                      <Text>{I18n.t('statistic_marketing')}</Text>
                       <LineChart
                         data={{
                           labels: [
@@ -538,8 +558,32 @@ const ProfileScreen = (props) => {
                         }}
                       />
                     </View>
+                  </Card.Content>
+                </Card>
+              </ScrollView>
+            </Modal>
+            <Modal
+              visible={isStatisticLoyaltyVisible}
+              onDismiss={() => setIsStatisticLoyaltyVisible(false)}
+              contentContainerStyle={styles.modal}
+              presentationStyle={'fullScreen'}>
+              <ScrollView>
+                <Card>
+                  <Card.Title
+                    rightStyle={{marginRight: 20}}
+                    title={I18n.t('loyalty_marketing')}
+                    subtitle=""
+                    right={() => {
+                      return (
+                        <TouchableOpacity
+                          onPress={() => hideModalStatLoyalty()}>
+                          <Avatar.Icon size={24} icon="close" />
+                        </TouchableOpacity>
+                      );
+                    }}
+                  />
+                  <Card.Content>
                     <View style={{}}>
-                      <Text>{I18n.t('loyalty_marketing')}</Text>
                       <LineChart
                         data={{
                           labels: [

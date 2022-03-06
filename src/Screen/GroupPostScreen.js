@@ -49,6 +49,8 @@ import axios from 'axios';
 import * as RootNavigation from '../rootNavigation';
 import PostPage from '../Components/PostPage';
 import UserAction from '../redux/actions/user';
+import PopupMenu from '../Components/PopupMenu';
+import AsyncStorage from '@react-native-community/async-storage';
 TimeAgo.addLocale(en);
 const timeAgo = new TimeAgo('en-US');
 const defaultUser = variables.defaultUser;
@@ -180,6 +182,54 @@ const GroupPostScreen = (props) => {
       </Text>
     );
   };
+  const actionPopUp = (id, action) => {
+    AsyncStorage.getItem('user').then((userToken) => {
+      if (action === 0) {
+        const url =
+          Config.API_URL_BASE4 +
+          Config.API_SAVE_OFFERT +
+          id +
+          '?userId=' +
+          JSON.parse(userToken).userId;
+        if (!loading) {
+          setLoading(true);
+          API.get(url)
+            .then((res) => {
+              setLoading(false);
+              alert(I18n.t('offert_saved'));
+            })
+            .then((res2) => {})
+            .catch((error) => {
+              setLoading(false);
+              console.log(error.response?.data?.error);
+              alert(error.response?.data?.error);
+            });
+        }
+      }
+      if (action === 1) {
+        const url =
+          Config.API_URL_BASE4 +
+          Config.API_REPORT_OFFERT +
+          id +
+          '?userId=' +
+          JSON.parse(userToken).userId;
+        if (!loading) {
+          setLoading(true);
+          API.get(url)
+            .then((res) => {
+              setLoading(false);
+              alert(I18n.t('offert_reported'));
+            })
+            .then((res2) => {})
+            .catch((error) => {
+              setLoading(false);
+              console.log(error.response?.data?.error);
+              alert(error.response?.data?.error);
+            });
+        }
+      }
+    });
+  };
 
   const rowRenderer = (type, item, index) => {
     return (
@@ -219,10 +269,14 @@ const GroupPostScreen = (props) => {
               </View>
             </View>
           </View>
+          <PopupMenu
+            actions={[I18n.t('save'), I18n.t('report')]}
+            onPress={(e, i) => actionPopUp(item.id, i)}
+          />
           <TouchableOpacity
             onPress={() => console.log('')}
             style={{width: 25, alignItems: 'center', marginBottom: 5}}>
-            <Icon name="dots-vertical" color="#000" style={{fontSize: 20}} />
+            <Icon name="dots-vertical" color="#fff" style={{fontSize: 20}} />
           </TouchableOpacity>
         </View>
         <View style={stylesItem.contentContainerTitle}>

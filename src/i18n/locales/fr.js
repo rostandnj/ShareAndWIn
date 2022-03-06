@@ -91,4 +91,6 @@ export default {
   month_10: 'Oct',
   month_11: 'Nov',
   month_12: 'Dec',
+  save: 'Enregistrer',
+  report: 'Signaler',
 };

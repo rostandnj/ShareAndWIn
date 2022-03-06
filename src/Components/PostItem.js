@@ -5,8 +5,8 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ScaledImage from './ScaledImage';
 import variables from '../var/variables';
-import {parse} from 'fecha';
-import TimeAgo from 'javascript-time-ago';
+import PopupMenu from './PopupMenu';
+import I18n from '../i18n/i18n';
 
 const PostItem = (props) => {
   const intToK = (num) => {
@@ -38,7 +38,6 @@ const PostItem = (props) => {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          // backgroundColor: 'green',
           height: 70,
         }}>
         <View style={stylesItem.customListView}>
@@ -69,11 +68,10 @@ const PostItem = (props) => {
             </View>
           </View>
         </View>
-        <TouchableOpacity
-          onPress={() => console.log('')}
-          style={{width: 25, alignItems: 'center', marginBottom: 5}}>
-          <Icon name="dots-vertical" color="#000" style={{fontSize: 20}} />
-        </TouchableOpacity>
+        <PopupMenu
+          actions={[I18n.t('save'), I18n.t('report')]}
+          onPress={(e, i) => props.actionPopUp(props.offer.id, i)}
+        />
       </View>
       <View style={stylesItem.contentContainerTitle}>
         <Text

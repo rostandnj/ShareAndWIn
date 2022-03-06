@@ -51,9 +51,17 @@ export const API_USER_NOTIFICATION =
   'chat/notificationListPage?enumNotifType=GROUP&userId=';
 export const API_NOTIFICATION_UNREAD_NUMBER =
   'chat/unseenNotificationList?enumNotifState=UNSEEN&enumNotifType=GROUP&userId=';
+export const API_SAVE_OFFERT = 'company/offer/savedOffer?offerId=';
+export const API_REPORT_OFFERT = 'company/offer/reportedOffer?offerId=';
+export const API_RE_MOVE_OFFERT = 'company/offer/removeSavedOffer?offerId';
+export const API_LIST_SAVE_OFFERT = 'company/offer/listOfSavedOffer?userId';
 
 const Config = {
   facebook,
+  API_SAVE_OFFERT,
+  API_REPORT_OFFERT,
+  API_RE_MOVE_OFFERT,
+  API_LIST_SAVE_OFFERT,
   google,
   API_URL_BASE1,
   API_URL_BASE2,

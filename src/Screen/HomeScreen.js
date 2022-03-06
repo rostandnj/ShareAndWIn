@@ -14,8 +14,15 @@ import {
   BackHandler,
   Share,
   TouchableOpacity,
+  UIManager,
+  findNodeHandle,
 } from 'react-native';
-import {Portal, Provider, DefaultTheme} from 'react-native-paper';
+import {
+  Portal,
+  Provider,
+  DefaultTheme,
+  Button as ButtonPaper,
+} from 'react-native-paper';
 import {useFocusEffect} from '@react-navigation/native';
 import {connect} from 'react-redux';
 import {SearchBar} from 'react-native-elements';
@@ -54,6 +61,7 @@ const theme = {
 const STYLES = ['default', 'dark-content', 'light-content'];
 const TRANSITIONS = ['fade', 'slide', 'none'];
 const HomeScreen = (props) => {
+  const [userId, setUserId] = useState(null);
   const [offers, setOffers] = useState([]);
   const [openOffer, setOpenOffer] = useState(null);
   const [openOfferIndex, setOpenOfferIndex] = useState(null);
@@ -77,6 +85,7 @@ const HomeScreen = (props) => {
   const [showSecondDialogReaction, setShowSecondDialogReaction] = useState(
     false,
   );
+  const [actionOfferId, setActionOfferId] = useState(null);
   const statusBarTransition = TRANSITIONS[0];
   const mainComments = useRef();
 
@@ -142,8 +151,56 @@ const HomeScreen = (props) => {
         showModalComment={goToShowOffer}
         makeReaction={makeReaction}
         onShare={onShare}
+        actionPopUp={actionPopUp}
       />
     );
+  };
+
+  const actionPopUp = (id, action) => {
+    if (action === 0) {
+      const url =
+        Config.API_URL_BASE4 +
+        Config.API_SAVE_OFFERT +
+        id +
+        '?userId=' +
+        userId;
+      if (!loading) {
+        setLoading(true);
+        API.get(url)
+          .then((res) => {
+            setLoading(false);
+            alert(I18n.t('offert_saved'));
+          })
+          .then((res2) => {})
+          .catch((error) => {
+            setLoading(false);
+            console.log(error.response?.data?.error);
+            alert(error.response?.data?.error);
+          });
+      }
+    }
+    if (action === 1) {
+      const url =
+        Config.API_URL_BASE4 +
+        Config.API_REPORT_OFFERT +
+        id +
+        '?userId=' +
+        userId;
+      if (!loading) {
+        setLoading(true);
+        API.get(url)
+          .then((res) => {
+            setLoading(false);
+            alert(I18n.t('offert_reported'));
+          })
+          .then((res2) => {})
+          .catch((error) => {
+            setLoading(false);
+            console.log(error.response?.data?.error);
+            alert(error.response?.data?.error);
+          });
+      }
+    }
   };
 
   const rowRendererComment = (type, item, index) => {
@@ -167,6 +224,7 @@ const HomeScreen = (props) => {
   useEffect(() => {
     AsyncStorage.getItem('user').then((userToken) => {
       if (userToken !== null) {
+        setUserId(JSON.parse(userToken).userId);
         let url = Config.API_URL_BASE1 + Config.API_USER_PROFILE;
         API.defaults.headers.Authorization =
           'Bearer ' + JSON.parse(userToken).accessToken;
@@ -582,19 +640,29 @@ const HomeScreen = (props) => {
                 borderBottomColor: '#0099ff',
                 borderTopColor: '#0099ff',
                 flex: 4,
+                height: 20,
               }}
               inputContainerStyle={{backgroundColor: 'white'}}
               placeholder={I18n.t('find_and_see')}
               onChangeText={(itemValue) => setQuery(itemValue)}
               value={query}
             />
-            <TouchableOpacity
-              style={{
-                flex: 1,
+            <ButtonPaper
+              contentStyle={{
+                width: 80,
+                height: '100%',
+                marginTop: -4,
+                borderRadius: 0,
               }}
-              onPress={() => goToSearch(query)}>
-              <Icon name="card-search" color="#fff" size={69} />
-            </TouchableOpacity>
+              labelStyle={{fontSize: 70}}
+              uppercase={false}
+              compact={true}
+              color={'#fff'}
+              size={40}
+              icon="card-search"
+              mode="text"
+              onPress={() => goToSearch(query)}
+            />
           </View>
           <View
             style={{
