@@ -126,7 +126,8 @@ const ProfileScreen = (props) => {
         .then((res) => {
           setUpdatingProfile(false);
           let u = props.user;
-          u.photo = res.data.data;
+          //console.log(res.data.data);
+          u.imageUrl = res.data.data.uid;
           setUser(u);
           props.isUpdate(u);
           setErrorPic(I18n.t('profile_updated'));
@@ -212,11 +213,11 @@ const ProfileScreen = (props) => {
     setErrorPic('');
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
-        //console.log('User cancelled image picker');
+        console.log('User cancelled image picker');
       } else if (response.error) {
-        //console.log('ImagePicker Error: ', response.error);
+        console.log('ImagePicker Error: ', response.error);
       } else if (response.customButton) {
-        //console.log('User tapped custom button: ', response.customButton);
+        console.log('User tapped custom button: ', response.customButton);
       } else {
         // You can also display the image using data:
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
@@ -249,10 +250,10 @@ const ProfileScreen = (props) => {
               defaultSource={require('../Image/pre.gif')}
               source={{
                 uri:
-                  props.user.photo !== null
+                  props.user.imageUrl !== null
                     ? Config.API_URL_BASE3 +
                       Config.API_FILE_MINI +
-                      props.user.photo.uid
+                      props.user.imageUrl
                     : '',
               }}
               size={80}
@@ -377,6 +378,65 @@ const ProfileScreen = (props) => {
         </View>
         <Provider theme={theme}>
           <Portal>
+            <Modal
+              visible={isPictureModalVisible}
+              onDismiss={() => setIsPictureModalVisible(false)}
+              contentContainerStyle={styles.modal}>
+              <Card>
+                <Card.Title
+                  title={I18n.t('update_picture')}
+                  subtitle=""
+                  left={() => <Avatar.Icon size={24} icon="account-edit" />}
+                />
+                <Card.Content>
+                  <View
+                    style={{
+                      paddingTop: 6,
+                      marginTop: 20,
+                      alignItems: 'center',
+                    }}>
+                    <Image style={styles.stretch} source={{uri: fileUri}} />
+
+                    <View
+                      style={{
+                        height: 50,
+                        backgroundColor: error !== '' ? '#a3cbf6' : 'white',
+                        alignItems: 'center',
+                        width: 300,
+                        paddingTop: 4,
+                      }}>
+                      <Text style={{color: 'white', fontSize: 16}}>
+                        {errorPic}
+                        {error}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={{height: 50}}>
+                    <ActivityIndicator
+                      animating={updatingProfile}
+                      color="#007bff"
+                      size="large"
+                      style={styles.activityIndicator}
+                    />
+                  </View>
+                </Card.Content>
+                <Card.Actions>
+                  <Button
+                    icon="close"
+                    mode="container"
+                    onPress={() => setIsPictureModalVisible(false)}>
+                    {I18n.t('cancel')}
+                  </Button>
+                  <Button
+                    mode="container"
+                    onPress={() => updateProfileImage()}
+                    style={{marginLeft: variables.deviceWidth / 2.2}}>
+                    {I18n.t('update')}
+                  </Button>
+                </Card.Actions>
+              </Card>
+            </Modal>
+
             <Modal
               visible={visible}
               onDismiss={hideModal}

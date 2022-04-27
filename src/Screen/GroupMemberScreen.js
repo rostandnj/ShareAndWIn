@@ -258,20 +258,23 @@ const GroupMemberScreen = (props) => {
           <View
             style={{
               width: '100%',
-              flexDirection: 'row-reverse',
-              marginTop: 20,
+              flexDirection: 'row',
+              marginTop: 10,
             }}>
-            <ActivityIndicator
-              animating={loading || loadingMore}
+            <ButtonPaper
+              loading={loading || loadingMore}
+              containerStyle={{width: 40, height: 50}}
+              labelStyle={{fontSize: 22, fontWeight: 'bold'}}
+              onPress={() => RootNavigation.navigate('groups', {})}
+              icon="arrow-left"
               color="#fff"
-              size="small"
-              style={styles.activityIndicatorComment}
+              mode={'text'}
             />
             <Text
               style={{
                 flex: 1,
-                marginTop: 0,
-                marginLeft: 10,
+                marginTop: 10,
+                marginLeft: 0,
                 flexWrap: 'wrap',
                 fontSize: 18,
                 color: '#fff',

@@ -1100,8 +1100,10 @@ const GroupPostScreen = (props) => {
               height: 50,
               marginTop: Platform.OS === 'ios' ? 30 : 10,
               paddingRight: 10,
+              paddingTop: 10,
             }}>
             <ButtonPaper
+              loading={loading || loadingMore}
               containerStyle={{width: 50, height: 50}}
               labelStyle={{fontSize: 22, fontWeight: 'bold'}}
               onPress={() => RootNavigation.navigate(props.searchData.from, {})}
@@ -1109,11 +1111,14 @@ const GroupPostScreen = (props) => {
               color="#fff"
               mode={'text'}
             />
+            <View style={{marginTop: 5}}>
+              <Icon name="account-group" color="#fff" style={{fontSize: 20}} />
+            </View>
             {props.searchData.type === 'search' && (
               <Text
                 style={{
                   flex: 1,
-                  marginTop: 0,
+                  marginTop: 5,
                   marginLeft: 10,
                   flexWrap: 'wrap',
                   fontSize: 22,
@@ -1128,7 +1133,7 @@ const GroupPostScreen = (props) => {
               <Text
                 style={{
                   flex: 1,
-                  marginTop: 0,
+                  marginTop: 5,
                   marginLeft: 10,
                   flexWrap: 'wrap',
                   fontSize: 22,
@@ -1136,24 +1141,9 @@ const GroupPostScreen = (props) => {
                   fontWeight: 'bold',
                   textAlign: 'left',
                 }}>
-                <Icon
-                  name="account-group"
-                  color="#fff"
-                  style={{fontSize: 20}}
-                />{' '}
                 {'    ' + props.searchData.keyword.name}
               </Text>
             )}
-            <ActivityIndicator
-              animating={loading || loadingMore}
-              color="#fff"
-              size="small"
-              style={{
-                marginBottom: 10,
-                width: 60,
-                height: 40,
-              }}
-            />
           </View>
           <View
             style={{

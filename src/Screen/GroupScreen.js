@@ -975,22 +975,41 @@ const GroupScreen = (props) => {
           <View
             style={{
               width: '100%',
-              flexDirection: 'row-reverse',
-              marginTop: 20,
+              flexDirection: 'row',
+              marginTop: 15,
             }}>
-            <ActivityIndicator
-              animating={loading || loadingMoreGroup}
+            <View
+              style={{
+                width: 40,
+                height: 40,
+                paddingBottom: 10,
+                marginRight: 20,
+                marginLeft: 0,
+              }}>
+              <ButtonPaper
+                loading={loading || loadingMoreGroup}
+                labelStyle={{fontSize: 22, fontWeight: 'bold'}}
+                onPress={() => {
+                  RootNavigation.navigate('home', {});
+                }}
+                icon="arrow-left"
+                color="#fff"
+                mode={'text'}
+              />
+            </View>
+            <Icon
+              name="account-group"
               color="#fff"
-              size="small"
-              style={styles.activityIndicatorComment}
+              containerStyle={{marginTop: 10}}
+              size={20}
             />
             <Text
               style={{
                 flex: 1,
                 marginTop: 0,
-                marginLeft: 10,
+                marginLeft: 20,
                 flexWrap: 'wrap',
-                fontSize: 22,
+                fontSize: 20,
                 color: '#fff',
                 fontWeight: 'bold',
                 textAlign: 'left',
@@ -1021,9 +1040,9 @@ const GroupScreen = (props) => {
                   }}>
                   <View
                     style={{
-                      width: 60,
+                      width: 100,
                       flexDirection: 'row',
-                      marginTop: 0,
+                      marginTop: 5,
                       paddingTop: 0,
                     }}>
                     <ButtonPaper
@@ -1036,12 +1055,15 @@ const GroupScreen = (props) => {
                       icon="arrow-left"
                       mode={'text'}
                     />
+                    <View style={{paddingTop: 17}}>
+                      <Icon name="account-group" color="#fff" size={22} />
+                    </View>
                   </View>
                   <View
                     style={{
-                      width: variables.deviceWidth - 120,
+                      width: variables.deviceWidth - 105,
                       flexDirection: 'row',
-                      marginTop: 20,
+                      marginTop: 24,
                     }}>
                     <Text
                       numberOfLines={2}
@@ -1093,10 +1115,23 @@ const GroupScreen = (props) => {
                             name="account-group"
                             color="#fff"
                             style={{fontSize: 20}}
-                          />{' '}
+                          />
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          height: 50,
+                          padding: 10,
+                          width: variables.deviceWidth / 2,
+                          backgroundColor: '#007bff',
+                          alignItems: 'center',
+                        }}>
+                        <Text style={[stylesItem.paragraph, {color: '#fff'}]}>
                           {displayedSuggestedGroup?.numberOfMembers}
                         </Text>
                       </View>
+                    </View>
+                    <View style={{flexDirection: 'row', marginTop: 20}}>
                       <View
                         style={{
                           height: 50,
@@ -1110,7 +1145,18 @@ const GroupScreen = (props) => {
                             name="message-text"
                             color="#fff"
                             style={{fontSize: 20}}
-                          />{' '}
+                          />
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          height: 50,
+                          padding: 10,
+                          width: variables.deviceWidth / 2,
+                          backgroundColor: '#007bff',
+                          alignItems: 'center',
+                        }}>
+                        <Text style={[stylesItem.paragraph, {color: '#fff'}]}>
                           {displayedSuggestedGroup?.numberOfOffers}
                         </Text>
                       </View>
@@ -1118,7 +1164,7 @@ const GroupScreen = (props) => {
                     <View style={stylesItem.reactionContainer}>
                       <ButtonPaper
                         contentStyle={{
-                          width: variables.deviceWidth * 0.5,
+                          width: variables.deviceWidth * 0.9,
                           backgroundColor: '#007bff',
                         }}
                         uppercase={false}

@@ -77,10 +77,11 @@ export const signin = (email, password) => {
         }
       })
       .catch(function (error) {
+        console.log(JSON.stringify(error));
         if (error.response && error.response.data) {
           dispatch(signInHasError(true, error.response.data.message, ''));
         } else {
-          console.log(JSON.stringify(error));
+          //console.log(JSON.stringify(error));
           dispatch(signInHasError(true, I18n.t('network_error'), ''));
           Alert.alert(
             'Message',

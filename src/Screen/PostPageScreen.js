@@ -36,6 +36,7 @@ import {parse} from 'fecha';
 import TimeAgo from 'javascript-time-ago';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import ScaledImageSimple from '../Components/ScaledImageSimple';
+import {Icon} from 'react-native-elements';
 const defaultUser = variables.defaultUser;
 
 const PostPageScreen = (props) => {
@@ -393,12 +394,17 @@ const PostPageScreen = (props) => {
                 color="#fff"
                 mode={'text'}
               />
+              <Icon
+                name="developer-board"
+                color="#fff"
+                containerStyle={{marginTop: 8}}
+              />
             </View>
             <View
               style={{
-                width: variables.deviceWidth - 40,
+                width: variables.deviceWidth - 100,
                 flexDirection: 'row',
-                marginTop: 10,
+                marginTop: 17,
                 paddingRight: 15,
               }}>
               <Text
@@ -406,12 +412,13 @@ const PostPageScreen = (props) => {
                   flex: 1,
                   marginTop: 0,
                   flexWrap: 'wrap',
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: 'bold',
-                  textAlign: 'center',
+                  textAlign: 'left',
                   color: '#fff',
                 }}>
-                {props.openOffer?.company?.name}
+                {props.openOffer?.company?.name.slice(0, 35)}{' '}
+                {props.openOffer?.company?.name.length > 35 ? ' ...' : ''}
               </Text>
               <ActivityIndicator
                 animating={false}
@@ -600,10 +607,11 @@ const PostPageScreen = (props) => {
                         style={styles.image}
                         source={{
                           uri:
-                            comment.user !== null && comment.user.photo !== null
+                            comment.user !== null &&
+                            comment.user.imageUrl !== null
                               ? Config.API_URL_BASE3 +
                                 Config.API_FILE_MINI +
-                                comment.user.photo.uid
+                                comment.user.imageUrl
                               : defaultUser,
                           priority: FastImage.priority.low,
                           cache: FastImage.cacheControl.immutable,
@@ -697,7 +705,7 @@ const PostPageScreen = (props) => {
                                             comment2.user !== null
                                               ? Config.API_URL_BASE3 +
                                                 Config.API_FILE_MINI +
-                                                comment2.user.photo.uid
+                                                comment2.user.imageUrl
                                               : defaultUser,
                                           priority: FastImage.priority.low,
                                           cache:
@@ -752,7 +760,7 @@ const PostPageScreen = (props) => {
                 uri:
                   Config.API_URL_BASE3 +
                   Config.API_FILE_MINI +
-                  props.user?.photo?.uid,
+                  props.user?.imageUrl,
                 priority: FastImage.priority.low,
                 cache: FastImage.cacheControl.immutable,
               }}

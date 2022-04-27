@@ -640,9 +640,13 @@ const HomeScreen = (props) => {
                 borderBottomColor: '#0099ff',
                 borderTopColor: '#0099ff',
                 flex: 4,
-                height: 20,
+                height: 60,
               }}
-              inputContainerStyle={{backgroundColor: 'white'}}
+              inputContainerStyle={{
+                backgroundColor: '#fff',
+                height: 45,
+                padding: 5,
+              }}
               placeholder={I18n.t('find_and_see')}
               onChangeText={(itemValue) => setQuery(itemValue)}
               value={query}
@@ -650,17 +654,16 @@ const HomeScreen = (props) => {
             <ButtonPaper
               contentStyle={{
                 width: 80,
-                height: '100%',
-                marginTop: -4,
+                height: 65,
+                marginTop: -2,
                 borderRadius: 0,
+                backgroundColor: '#0099ff',
               }}
-              labelStyle={{fontSize: 70}}
-              uppercase={false}
-              compact={true}
+              labelStyle={{fontSize: 60}}
+              type="clear"
               color={'#fff'}
-              size={40}
+              size={35}
               icon="card-search"
-              mode="text"
               onPress={() => goToSearch(query)}
             />
           </View>
@@ -672,13 +675,13 @@ const HomeScreen = (props) => {
               flexDirection: 'row',
             }}>
             <ProgressBar
-              indeterminate={loading}
+              indeterminate={loading || loadingMore}
               animated={true}
               borderWidth={0}
               borderRadius={0}
               progress={1}
               useNativeDriver={true}
-              color={'#a4d0ef'}
+              color={'#6e7f96'}
               width={variables.deviceWidth}
             />
           </View>
@@ -701,22 +704,6 @@ const HomeScreen = (props) => {
                 onEndReached={loadMore}
                 /*renderFooter={renderFooter}*/
               />
-            )}
-            {loadingMore && (
-              <View
-                style={{
-                  backgroundColor: '#fff',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: 40,
-                }}>
-                <ActivityIndicator
-                  animating={loadingMore}
-                  color="#0099ff"
-                  size="small"
-                  style={styles.activityIndicator}
-                />
-              </View>
             )}
           </View>
         </View>

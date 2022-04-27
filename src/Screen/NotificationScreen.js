@@ -232,22 +232,33 @@ const NotificationScreen = (props) => {
           <View
             style={{
               width: '100%',
-              flexDirection: 'row-reverse',
-              marginTop: 20,
+              flexDirection: 'row',
+              marginTop: 15,
             }}>
-            <ActivityIndicator
-              animating={loading}
+            <ButtonPaper
+              loading={loading}
+              labelStyle={{fontSize: 22, fontWeight: 'bold'}}
+              onPress={() => {
+                RootNavigation.navigate('home', {});
+              }}
+              icon="arrow-left"
               color="#fff"
-              size="small"
-              style={styles.activityIndicatorComment}
+              mode={'text'}
+            />
+            <Icon
+              name="bell"
+              type=""
+              color="#fff"
+              containerStyle={{marginTop: 10}}
+              size={20}
             />
             <Text
               style={{
                 flex: 1,
                 marginTop: 0,
-                marginLeft: 10,
+                marginLeft: 20,
                 flexWrap: 'wrap',
-                fontSize: 22,
+                fontSize: 20,
                 color: '#fff',
                 fontWeight: 'bold',
                 textAlign: 'left',

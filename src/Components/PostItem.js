@@ -61,7 +61,7 @@ const PostItem = (props) => {
             </View>
             <View style={stylesItem.extraInfoWrapper}>
               <Text style={{color: '#333', fontSize: 14}}>
-                {props.convertDate(props.offer.publishedAt)}
+                {props.convertDate(props.offer.createdAt)}
               </Text>
               <Text style={{fontSize: 16, marginHorizontal: 5}}>·</Text>
               <FontAwesome5Icon color="#333" name="globe-asia" />

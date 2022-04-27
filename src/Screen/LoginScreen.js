@@ -9,6 +9,7 @@ import {
   Keyboard,
   TouchableOpacity,
   KeyboardAvoidingView,
+  ImageBackground,
 } from 'react-native';
 import I18n from '../i18n/i18n';
 import Config from '../var/config';
@@ -141,28 +142,44 @@ const LoginScreen = (props) => {
               <View
                 style={{
                   width: variables.deviceWidth,
-                  flexDirection: 'row',
+                  flexDirection: 'column',
                   marginTop: 20,
-                  paddingLeft: variables.deviceWidth * 0.03,
                 }}>
                 <TouchableOpacity
                   style={[
                     styles.buttonStyle,
-                    {width: variables.deviceWidth * 0.4, height: 38},
+                    {
+                      height: 38,
+                      width: variables.deviceWidth * 0.9,
+                      paddingLeft: '0%',
+                    },
                   ]}
                   activeOpacity={0.5}
                   onPress={handleSubmitPress}>
-                  <Text style={styles.buttonTextStyle}>{I18n.t('login')}</Text>
+                  <Text
+                    style={[
+                      styles.buttonTextStyle,
+                      {textAlign: 'center', width: '100%'},
+                    ]}>
+                    {I18n.t('login')}
+                  </Text>
                 </TouchableOpacity>
                 <View
                   style={[
                     styles.textBtn,
                     {
-                      marginTop: 23,
+                      marginTop: 10,
+                      width: '100%',
+                      alignItems: 'center',
                     },
                   ]}>
                   <Icon.Button
-                    style={{width: '100%', flexDirection: 'row'}}
+                    style={{
+                      width: variables.deviceWidth * 0.9,
+                      flexDirection: 'row',
+                      fontSize: 24,
+                      paddingLeft: '30%',
+                    }}
                     name="google"
                     borderRadius={30}
                     backgroundColor="#DD4B39"
@@ -269,7 +286,7 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   container: {
     flex: 1,
@@ -302,7 +319,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     borderRadius: 30,
-    marginLeft: 15,
+    marginLeft: 10,
     marginRight: 15,
     marginTop: 20,
     marginBottom: 15,
@@ -310,7 +327,7 @@ const styles = StyleSheet.create({
   textBtn: {
     justifyContent: 'space-between',
     flexDirection: 'row',
-    margin: 20,
+    margin: 15,
     marginTop: 5,
     marginBottom: 30,
   },
